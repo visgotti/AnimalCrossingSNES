@@ -1,0 +1,167 @@
+{
+    "actions": {},
+    "id": "body",
+    "name": "body",
+    "boneNames": {},
+    "actionIds": [],
+    "directions": [
+        "west",
+        "east",
+        "south",
+        "north"
+    ],
+    "attachmentSlotIds": [],
+    "atlasIds": [],
+    "animationIds": [],
+    "setupData": {
+        "frames": {
+            "south": {
+                "boneOrder": [
+                    2,
+                    4,
+                    5,
+                    7
+                ],
+                "bones": [
+                    {
+                        "id": "2",
+                        "y": 30,
+                        "x": 27,
+                        "slotId": 203,
+                        "scaleX": -2,
+                        "scaleY": -2
+                    },
+                    {
+                        "id": "4",
+                        "y": -7,
+                        "x": -10,
+                        "slotId": 206
+                    },
+                    {
+                        "id": "5",
+                        "y": -2,
+                        "x": -19,
+                        "slotId": 205
+                    },
+                    {
+                        "id": "7",
+                        "y": -21,
+                        "x": -1,
+                        "slotId": 207,
+                        "scaleX": 0.20000000000000018,
+                        "scaleY": 2.0000000000000018
+                    }
+                ]
+            },
+            "north": {
+                "boneOrder": [
+                    2,
+                    5,
+                    4,
+                    7
+                ],
+                "bones": [
+                    {
+                        "id": "2",
+                        "slotId": 203
+                    },
+                    {
+                        "id": "5",
+                        "y": 3,
+                        "x": 19,
+                        "slotId": 205
+                    },
+                    {
+                        "id": "4",
+                        "y": 8,
+                        "x": 10,
+                        "slotId": 206
+                    },
+                    {
+                        "id": "7",
+                        "y": 20,
+                        "x": 1,
+                        "slotId": 207,
+                        "scaleX": -0.29999999999999993,
+                        "scaleY": -1.9
+                    }
+                ]
+            },
+            "east": {
+                "boneOrder": [
+                    2,
+                    4,
+                    5
+                ],
+                "bones": [
+                    {
+                        "id": "2",
+                        "y": -3,
+                        "x": 26,
+                        "rotation": 90,
+                        "slotId": 208
+                    },
+                    {
+                        "id": "4",
+                        "y": 8,
+                        "x": -1,
+                        "slotId": 209
+                    },
+                    {
+                        "id": "5",
+                        "x": 4,
+                        "slotId": 210
+                    }
+                ]
+            },
+            "west": {
+                "boneOrder": [
+                    2,
+                    4,
+                    5
+                ],
+                "bones": [
+                    {
+                        "id": "2",
+                        "y": -3,
+                        "rotation": -90,
+                        "slotId": 208,
+                        "scaleX": -2
+                    },
+                    {
+                        "id": "4",
+                        "y": 8,
+                        "x": 1,
+                        "slotId": 209
+                    },
+                    {
+                        "id": "5",
+                        "x": -4,
+                        "slotId": 210
+                    }
+                ]
+            }
+        },
+        "bones": [
+            {
+                "name": "base",
+                "id": 2
+            },
+            {
+                "name": "shirt",
+                "id": 4,
+                "parentBoneId": 2
+            },
+            {
+                "name": "sleeve",
+                "id": 5,
+                "parentBoneId": 2
+            },
+            {
+                "name": "sleeve2",
+                "id": 7,
+                "parentBoneId": 2
+            }
+        ]
+    }
+}

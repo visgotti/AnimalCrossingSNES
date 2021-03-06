@@ -1,0 +1,12 @@
+{
+    "id": 5,
+    "name": "base_shirt",
+    "atlasIds": [
+        1,
+        3
+    ],
+    "animationIds": [
+        29
+    ],
+    "attachmentSlotIds": []
+}

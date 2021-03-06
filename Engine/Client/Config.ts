@@ -1,0 +1,5 @@
+export const CONFIG_CONSTANTS = {
+    HUNGER_DECREASE_PER_HOUR: 1,
+    HUNGER_MAX: 10,
+    SECONDS_PER_HOUR: 6,
+}

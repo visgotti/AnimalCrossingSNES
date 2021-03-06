@@ -1,0 +1,178 @@
+{
+  "id": 4,
+  "endTime": "1500",
+  "frameData": [
+    {
+      "time": 0,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 14,
+          "hide": false,
+          "name": "base"
+        },
+        {
+          "id": 15,
+          "slotId": 76,
+          "hide": false,
+          "name": "base_shirt"
+        },
+        {
+          "id": 8,
+          "slotId": null,
+          "hide": true,
+          "name": "tool"
+        },
+        {
+          "id": 10,
+          "slotId": null,
+          "hide": true,
+          "name": "sweat"
+        },
+        {
+          "id": 11,
+          "slotId": null,
+          "hide": true,
+          "name": "effect"
+        },
+        {
+          "id": 17,
+          "slotId": null,
+          "hide": false,
+          "name": "hat"
+        }
+      ],
+      "boneOrder": [
+        2,
+        15,
+        3,
+        4,
+        5,
+        6,
+        8,
+        10,
+        11,
+        17
+      ],
+      "boneOrderNamed": [
+        "base",
+        "base_shirt",
+        "right-arm",
+        "left-arm",
+        "right-hand",
+        "left-hand",
+        "tool",
+        "sweat",
+        "effect",
+        "hat"
+      ]
+    },
+    {
+      "time": 663,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 15,
+          "name": "base"
+        },
+        {
+          "id": 15,
+          "slotId": 77,
+          "name": "base_shirt"
+        },
+        {
+          "id": 8,
+          "hide": false,
+          "name": "tool"
+        },
+        {
+          "id": 10,
+          "hide": false,
+          "name": "sweat"
+        },
+        {
+          "id": 11,
+          "hide": false,
+          "name": "effect"
+        }
+      ]
+    },
+    {
+      "time": 788,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 16,
+          "name": "base"
+        },
+        {
+          "id": 15,
+          "slotId": 78,
+          "name": "base_shirt"
+        }
+      ]
+    },
+    {
+      "time": 921,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 15,
+          "name": "base"
+        },
+        {
+          "id": 15,
+          "slotId": 77,
+          "name": "base_shirt"
+        }
+      ]
+    },
+    {
+      "time": 1065,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 16,
+          "name": "base"
+        },
+        {
+          "id": 15,
+          "slotId": 78,
+          "name": "base_shirt"
+        }
+      ]
+    },
+    {
+      "time": 1200,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 15,
+          "name": "base"
+        },
+        {
+          "id": 15,
+          "slotId": 77,
+          "name": "base_shirt"
+        }
+      ]
+    },
+    {
+      "time": 1350,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 16,
+          "name": "base"
+        },
+        {
+          "id": 15,
+          "slotId": 78,
+          "name": "base_shirt"
+        }
+      ]
+    }
+  ],
+  "direction": "north",
+  "actionId": 2
+}

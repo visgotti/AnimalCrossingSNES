@@ -1,0 +1,132 @@
+{
+  "tomato": {
+    "name": "tomato",
+    "hidingSpot": {
+      "timeToHide": 100,
+      "timeToSearch": 100
+    },
+    "fullGrownExpireTimeout": 1500,
+    "harvestTime": 200,
+    "growingStages": [{
+      "waterTimeout": 200,
+      "time": 300,
+      "needsWaterStages": 3
+    }, {
+      "waterTimeout": 200,
+      "time": 600,
+      "needsWaterStages": 3
+    }, {
+      "waterTimeout": 200,
+      "time": 900,
+      "needsWaterStages": 3
+    },{
+      "waterTimeout": 200,
+      "time": 1200,
+      "needsWaterStages": 3
+    }]
+  },
+  "beet": {
+    "name": "beet",
+    "hidingSpot": {
+      "timeToHide": 100,
+      "timeToSearch": 100
+    },
+    "fullGrownExpireTimeout": 1500,
+    "harvestTime": 200,
+    "growingStages": [{
+      "waterTimeout": 200,
+      "time": 300,
+      "needsWaterStages": 3
+    }, {
+      "waterTimeout": 200,
+      "time": 600,
+      "needsWaterStages": 3
+    }, {
+      "waterTimeout": 200,
+      "time": 900,
+      "needsWaterStages": 3
+    },{
+      "waterTimeout": 200,
+      "time": 1200,
+      "needsWaterStages": 3
+    }]
+  },
+  "wheat": {
+    "name": "wheat",
+    "hidingSpot": {
+      "timeToHide": 100,
+      "timeToSearch": 100
+    },
+    "fullGrownExpireTimeout": 1500,
+    "harvestTime": 200,
+    "growingStages": [{
+      "waterTimeout": 200,
+      "time": 300,
+      "needsWaterStages": 3
+    }, {
+      "waterTimeout": 200,
+      "time": 600,
+      "needsWaterStages": 3
+    }, {
+      "waterTimeout": 200,
+      "time": 900,
+      "needsWaterStages": 3
+    },{
+      "waterTimeout": 200,
+      "time": 1200,
+      "needsWaterStages": 3
+    }]
+  },
+  "corn": {
+    "name": "corn",
+    "hidingSpot": {
+      "timeToHide": 100,
+      "timeToSearch": 100
+    },
+    "fullGrownExpireTimeout": 1500,
+    "harvestTime": 200,
+    "growingStages": [{
+      "waterTimeout": 200,
+      "time": 300,
+      "needsWaterStages": 3
+    }, {
+      "waterTimeout": 200,
+      "time": 600,
+      "needsWaterStages": 3
+    }, {
+      "waterTimeout": 200,
+      "time": 900,
+      "needsWaterStages": 3
+    }, {
+      "waterTimeout": 200,
+      "time": 1200,
+      "needsWaterStages": 3
+    }]
+  },
+  "carrot": {
+    "name": "carrot",
+    "hidingSpot": {
+      "timeToHide": 100,
+      "timeToSearch": 100
+    },
+    "fullGrownExpireTimeout": 1500,
+    "harvestTime": 200,
+    "growingStages": [{
+      "waterTimeout": 200,
+      "time": 300,
+      "needsWaterStages": 3
+    }, {
+      "waterTimeout": 200,
+      "time": 600,
+      "needsWaterStages": 3
+    }, {
+      "waterTimeout": 200,
+      "time": 900,
+      "needsWaterStages": 3
+    },{
+      "waterTimeout": 200,
+      "time": 1200,
+      "needsWaterStages": 3
+    }]
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "id": 28,
+  "endTime": 390,
+  "frameData": [
+    {
+      "time": 0,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 53,
+          "hide": false,
+          "name": "base"
+        },
+        {
+          "id": 15,
+          "slotId": 121,
+          "hide": false,
+          "name": "base_shirt"
+        },
+        {
+          "id": 8,
+          "slotId": 58,
+          "hide": false,
+          "x": 48,
+          "y": 31,
+          "rotation": -270,
+          "name": "tool"
+        },
+        {
+          "id": 3,
+          "slotId": null,
+          "name": "right-arm"
+        },
+        {
+          "id": 10,
+          "slotId": null,
+          "hide": true,
+          "name": "sweat"
+        },
+        {
+          "id": 11,
+          "slotId": null,
+          "hide": true,
+          "name": "effect"
+        },
+        {
+          "id": 17,
+          "slotId": null,
+          "hide": false,
+          "name": "hat"
+        }
+      ],
+      "boneOrder": [
+        2,
+        15,
+        8,
+        3,
+        4,
+        5,
+        6,
+        10,
+        11,
+        17
+      ],
+      "boneOrderNamed": [
+        "base",
+        "base_shirt",
+        "tool",
+        "right-arm",
+        "left-arm",
+        "right-hand",
+        "left-hand",
+        "sweat",
+        "effect",
+        "hat"
+      ]
+    },
+    {
+      "time": 204,
+      "bones": [
+        {
+          "id": 8,
+          "slotId": 59,
+          "scaleX": -2,
+          "x": -18,
+          "y": -17,
+          "rotation": 270,
+          "name": "tool"
+        },
+        {
+          "id": "2",
+          "slotId": 54,
+          "name": "base"
+        },
+        {
+          "id": 15,
+          "slotId": 122,
+          "name": "base_shirt"
+        },
+        {
+          "id": 11,
+          "slotId": 60,
+          "hide": false,
+          "scaleX": -2,
+          "x": 25,
+          "y": 25,
+          "name": "effect"
+        }
+      ],
+      "boneOrder": [
+        8,
+        3,
+        2,
+        15,
+        4,
+        5,
+        6,
+        10,
+        11,
+        17
+      ],
+      "boneOrderNamed": [
+        "tool",
+        "right-arm",
+        "base",
+        "base_shirt",
+        "left-arm",
+        "right-hand",
+        "left-hand",
+        "sweat",
+        "effect",
+        "hat"
+      ]
+    }
+  ],
+  "direction": "west",
+  "actionId": "5"
+}

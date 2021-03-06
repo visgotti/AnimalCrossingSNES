@@ -1,0 +1,16 @@
+{
+    "id": 3,
+    "name": "hatchet",
+    "atlasIds": [
+        1,
+        3,
+        2
+    ],
+    "animationIds": [
+        25,
+        26,
+        27,
+        28
+    ],
+    "attachmentSlotIds": []
+}

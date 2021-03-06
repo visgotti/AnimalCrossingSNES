@@ -1,0 +1,127 @@
+{
+  "id": 24,
+  "endTime": 390,
+  "frameData": [
+    {
+      "time": 0,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 53,
+          "hide": false,
+          "name": "base"
+        },
+        {
+          "id": 15,
+          "slotId": 121,
+          "hide": false,
+          "name": "base_shirt"
+        },
+        {
+          "id": 3,
+          "slotId": null,
+          "name": "right-arm"
+        },
+        {
+          "id": 8,
+          "slotId": null,
+          "hide": false,
+          "name": "tool"
+        },
+        {
+          "id": 10,
+          "slotId": null,
+          "hide": true,
+          "name": "sweat"
+        },
+        {
+          "id": 11,
+          "slotId": null,
+          "hide": true,
+          "name": "effect"
+        },
+        {
+          "id": 17,
+          "slotId": null,
+          "hide": false,
+          "name": "hat"
+        }
+      ],
+      "boneOrder": [
+        2,
+        15,
+        3,
+        8,
+        4,
+        5,
+        6,
+        10,
+        11,
+        17
+      ],
+      "boneOrderNamed": [
+        "base",
+        "base_shirt",
+        "right-arm",
+        "tool",
+        "left-arm",
+        "right-hand",
+        "left-hand",
+        "sweat",
+        "effect",
+        "hat"
+      ]
+    },
+    {
+      "time": 204,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 54,
+          "name": "base"
+        },
+        {
+          "id": 15,
+          "slotId": 122,
+          "name": "base_shirt"
+        },
+        {
+          "id": 10,
+          "hide": false,
+          "name": "sweat"
+        },
+        {
+          "id": 11,
+          "hide": false,
+          "name": "effect"
+        }
+      ],
+      "boneOrder": [
+        8,
+        2,
+        15,
+        3,
+        4,
+        5,
+        6,
+        10,
+        11,
+        17
+      ],
+      "boneOrderNamed": [
+        "tool",
+        "base",
+        "base_shirt",
+        "right-arm",
+        "left-arm",
+        "right-hand",
+        "left-hand",
+        "sweat",
+        "effect",
+        "hat"
+      ]
+    }
+  ],
+  "direction": "west",
+  "actionId": 5
+}

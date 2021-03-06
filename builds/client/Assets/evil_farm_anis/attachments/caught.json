@@ -1,0 +1,24 @@
+{
+    "id": 9,
+    "name": "caught",
+    "atlasIds": [],
+    "animationIds": [],
+    "setupData": {
+        "frames": {
+            "base": {
+                "boneOrder": [
+                    2
+                ],
+                "bones": [
+                    {
+                        "id": 2,
+                        "y": -8,
+                        "x": -1,
+                        "slotId": 169
+                    }
+                ]
+            }
+        }
+    },
+    "attachmentSlotIds": []
+}

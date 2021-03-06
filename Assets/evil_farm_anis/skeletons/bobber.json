@@ -1,0 +1,45 @@
+{
+    "actions": {
+        "11": "bob"
+    },
+    "id": "bobber",
+    "name": "bobber",
+    "boneNames": {},
+    "actionIds": [
+        11
+    ],
+    "directions": [
+        "base"
+    ],
+    "attachmentSlotIds": [
+        6
+    ],
+    "atlasIds": [
+        2
+    ],
+    "animationIds": [
+        "35"
+    ],
+    "setupData": {
+        "frames": {
+            "base": {
+                "boneOrder": [
+                    2
+                ],
+                "bones": [
+                    {
+                        "id": 2,
+                        "y": 2,
+                        "slotId": 166
+                    }
+                ]
+            }
+        },
+        "bones": [
+            {
+                "name": "base",
+                "id": 2
+            }
+        ]
+    }
+}

@@ -1,0 +1,20 @@
+{
+  "domain": "127.0.0.1",
+  "servers": {
+    "web": [
+      {
+        "host": "127.0.0.1",
+        "port": 4040
+      }
+    ]
+  },
+  "engine": {
+    "typescript": true
+  },
+  "paths": {
+    "engine": "Engine",
+    "remoteProjectPath": "C:\\Users\\visgotti\\source\\repos\\AnimalCrossingSNES"
+  },
+  "env": {
+  }
+}

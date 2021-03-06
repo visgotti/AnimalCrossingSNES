@@ -1,0 +1,31 @@
+{
+  "id": 35,
+  "endTime": "1000",
+  "frameData": [
+    {
+      "time": 0,
+      "bones": [
+        {
+          "id": 2,
+          "slotId": 165,
+          "hide": false,
+          "x": -1,
+          "name": "base"
+        }
+      ]
+    },
+    {
+      "time": 504,
+      "bones": [
+        {
+          "id": 2,
+          "slotId": 164,
+          "x": 1,
+          "name": "base"
+        }
+      ]
+    }
+  ],
+  "direction": "base",
+  "actionId": 11
+}

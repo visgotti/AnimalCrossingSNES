@@ -1,0 +1,148 @@
+{
+  "id": 10,
+  "endTime": 1000,
+  "frameData": [
+    {
+      "time": 0,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 41,
+          "hide": false,
+          "name": "base"
+        },
+        {
+          "id": 15,
+          "slotId": 99,
+          "hide": false,
+          "name": "base_shirt"
+        },
+        {
+          "id": 8,
+          "slotId": null,
+          "hide": false,
+          "name": "tool"
+        },
+        {
+          "id": 10,
+          "slotId": null,
+          "hide": false,
+          "name": "sweat"
+        },
+        {
+          "id": 11,
+          "slotId": null,
+          "hide": false,
+          "name": "effect"
+        },
+        {
+          "id": 17,
+          "slotId": null,
+          "hide": false,
+          "name": "hat"
+        }
+      ],
+      "boneOrder": [
+        2,
+        15,
+        3,
+        4,
+        5,
+        6,
+        8,
+        10,
+        11,
+        17
+      ],
+      "boneOrderNamed": [
+        "base",
+        "base_shirt",
+        "right-arm",
+        "left-arm",
+        "right-hand",
+        "left-hand",
+        "tool",
+        "sweat",
+        "effect",
+        "hat"
+      ]
+    },
+    {
+      "time": 166,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 42,
+          "name": "base"
+        },
+        {
+          "id": 15,
+          "slotId": 100,
+          "name": "base_shirt"
+        }
+      ]
+    },
+    {
+      "time": 332,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 43,
+          "name": "base"
+        },
+        {
+          "id": 15,
+          "slotId": 101,
+          "name": "base_shirt"
+        }
+      ]
+    },
+    {
+      "time": 498,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 44,
+          "name": "base"
+        },
+        {
+          "id": 15,
+          "slotId": 102,
+          "name": "base_shirt"
+        }
+      ]
+    },
+    {
+      "time": 664,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 45,
+          "name": "base"
+        },
+        {
+          "id": 15,
+          "slotId": 103,
+          "name": "base_shirt"
+        }
+      ]
+    },
+    {
+      "time": 830,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 46,
+          "name": "base"
+        },
+        {
+          "id": 15,
+          "slotId": 104,
+          "name": "base_shirt"
+        }
+      ]
+    }
+  ],
+  "direction": "north",
+  "actionId": 4
+}

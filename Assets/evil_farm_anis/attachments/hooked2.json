@@ -1,0 +1,23 @@
+{
+    "id": 8,
+    "name": "hooked2",
+    "atlasIds": [],
+    "animationIds": [],
+    "setupData": {
+        "frames": {
+            "base": {
+                "boneOrder": [
+                    2
+                ],
+                "bones": [
+                    {
+                        "id": 2,
+                        "x": -1,
+                        "slotId": 168
+                    }
+                ]
+            }
+        }
+    },
+    "attachmentSlotIds": []
+}
