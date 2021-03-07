@@ -89,6 +89,13 @@ export function defaultGameData(playerName, startingSpawn) : GameStateData {
     }
 }
 
+export type ItemTypeData = {}
+
+export type GlobalItemData = {
+    name: string,
+    type: ItemTypes,
+}
+
 export type InventoryItem = {
     index: number,
     name: string,
@@ -107,6 +114,51 @@ export type GameStateData = {
     inventory: Array<InventoryItem>
 }
 
+export type InventoryTextures = {
+    background: PIXI.Texture,
+    contextMenu: {
+        background: PIXI.Texture,
+        selectedBackground: PIXI.Texture,
+        pointer: PIXI.Texture,
+    },
+    item: {
+        emptyBackground: PIXI.Texture,
+        selectedBackground: PIXI.Texture,
+        pointer: PIXI.Texture,
+    }
+}
+
+export type DialogueInterface = {
+    nameLabel : PIXI.Texture,
+    npc: {
+        nameLabel: PIXI.Texture,
+        diaglogueBackground: PIXI.Texture,
+        continueIndicator: PIXI.Texture,
+    },
+    response: {
+        background: PIXI.Texture,
+        selectedOptionBackground: PIXI.Texture,
+        pointer: PIXI.Texture,
+    }
+}
+
+export type ItemTextures = {
+    tree: PIXI.Texture,
+    honey: PIXI.Texture,
+    seeds1: PIXI.Texture,
+    seeds2: PIXI.Texture,
+    seeds3: PIXI.Texture,
+    seeds4: PIXI.Texture,
+    beehive: PIXI.Texture,
+    hole: PIXI.Texture,
+    bee: PIXI.Texture,
+}
+
+export type GameTextures = {
+    inventory: InventoryTextures,
+    items: ItemTextures
+}
+
 export type PlayerInput = {
     action: boolean,
     hotkeyIndex: number,
@@ -121,6 +173,8 @@ export type PlayerInput = {
     inventory: boolean,
     sprint: boolean,
     grab: boolean,
+    cancel: boolean,
+    escape: boolean,
 }
 
 export enum BugTypes {

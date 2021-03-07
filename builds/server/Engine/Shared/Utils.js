@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRandomColor = exports.getRandomNumber = exports.getRandomPositionFromRect = exports.getRandomPositionFromCircle = exports.getRandomPositionFromPolygon = exports.boundingFromPositions = exports.polygonContainsPoint = exports.rectFromPolygon = exports.rectFromBoundingBox = exports.boundingBoxFromRect = exports.boundingBoxFromPolygon = exports.normalizePolygon = exports.popRandomFromArray = exports.getRandomItemFromArray = exports.lineCircle = exports.polyCircleCollision = exports.getRect1CollisionAngleAndSlope = exports.getRectRectSegmentCollisions = exports.getVerticesFromRect = exports.rectContainsPoint = exports.rectCircleColliding = exports.rotatePolygon = exports.flipPolygon = exports.translatePoint = exports.getLinesFromPolygon = exports.getScreenPositionFromWorldPosition = exports.getDirectionAndRelativeAngleFromAngle = exports.pivotPoint = exports.getDegreeAngleFromPositions = exports.getRadianAngleFromPositions = exports.removeAndDeleteSprite = exports.getMinRectToRectDistance = exports.unflattenPointArrays = exports.flattenPointArray = exports.rectsAreWithinDistance = exports.pointIsWithinRectDistance = exports.getRectEdges = exports.toRadian = exports.getMovementDataFromDeltas = exports.rectsAreColliding = exports.getDistance = exports.getPercentage = exports.asyncTimeout = void 0;
+exports.getRandomColor = exports.getRandomNumber = exports.getRandomPositionFromRect = exports.getRandomPositionFromCircle = exports.getRandomPositionFromPolygon = exports.boundingFromPositions = exports.polygonContainsPoint = exports.rectFromPolygon = exports.rectFromBoundingBox = exports.boundingBoxFromRect = exports.boundingBoxFromPolygon = exports.normalizePolygon = exports.popRandomFromArray = exports.getRandomItemFromArray = exports.lineCircle = exports.polyCircleCollision = exports.getRect1CollisionAngleAndSlope = exports.getRectRectSegmentCollisions = exports.getVerticesFromRect = exports.rectContainsPoint = exports.rectCircleColliding = exports.circleCircleColliding = exports.rotatePolygon = exports.flipPolygon = exports.translatePoint = exports.getLinesFromPolygon = exports.getScreenPositionFromWorldPosition = exports.getDirectionAndRelativeAngleFromAngle = exports.pivotPoint = exports.getDegreeAngleFromPositions = exports.getRadianAngleFromPositions = exports.removeAndDeleteSprite = exports.getMinRectToRectDistance = exports.unflattenPointArrays = exports.flattenPointArray = exports.rectsAreWithinDistance = exports.pointIsWithinRectDistance = exports.getRectEdges = exports.toRadian = exports.getMovementDataFromDeltas = exports.rectsAreColliding = exports.getDistance = exports.getPercentage = exports.asyncTimeout = void 0;
 function asyncTimeout(timeout) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve) => {
@@ -334,6 +334,15 @@ function rotatePolygon(polygon, degrees) {
     });
 }
 exports.rotatePolygon = rotatePolygon;
+function circleCircleColliding(circle1, circle2) {
+    const radius1 = circle1.radius ? circle1.radius : circle1.r;
+    const radius2 = circle2.radius ? circle2.radius : circle2.r;
+    const dx = circle1.x - circle2.x;
+    const dy = circle1.y - circle2.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    return distance < radius1 + radius2;
+}
+exports.circleCircleColliding = circleCircleColliding;
 function rectCircleColliding(rect, circle) {
     var distX = Math.abs(circle.x - rect.x - rect.width / 2);
     var distY = Math.abs(circle.y - rect.y - rect.height / 2);

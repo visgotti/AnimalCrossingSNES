@@ -27,9 +27,11 @@ export enum MESSAGES {
     DROP_ITEM,
     REMOVE_DROPPED_ITEM,
     INVENTORY_ERROR,
+    NEW_FLOWER,
 }
 
 export enum COLLIDER_TAGS {
+    flower='flower',
     bug='bug',
     blocking='blocking',
     sort='sort',

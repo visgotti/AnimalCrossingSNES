@@ -1,4 +1,4 @@
-import {defaultGameData, StartGameData} from "../../Shared/types";
+import {defaultGameData, GameTextures, InventoryTextures, StartGameData} from "../../Shared/types";
 
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 import * as World from '../lib/tileyo.js';
@@ -36,11 +36,13 @@ import { FlowerSystem } from "../Systems/Flower/System";
 
 import Gotti from 'gotti';
 import {getRandomNumber} from "../../Shared/Utils";
+import GottiGameInput from "../lib/GottiGameInput";
 export default {
     isNetworked: false,
     type: 'island',
     systems: [
         GameStateSystem,
+        InventorySystem,
         KeyboardInputSystem,
         LevelSystem,
         PlayerActionSystem,
@@ -52,7 +54,6 @@ export default {
         TreeSystem,
         NPCMovementSystem,
         ItemDropSystem,
-        InventorySystem,
         DialogueSystem,
         BugCatchSystem,
         BugMovementSystem,
@@ -63,6 +64,52 @@ export default {
     plugins: [],
     areas: [],
     async globals(gameData, areaData, client) {
+        // if you add a new action here, youll probably need to edit the code in Input / System.ts -> resetState() -> add the new action string to the hard coded array.
+        const gameInput = new GottiGameInput({
+            keyboard: {
+                'moveDown':  ["KeyS", "ArrowDown"],
+                'moveUp':  ["KeyW", "ArrowUp"],
+                'moveLeft':  ["KeyA", "ArrowLeft"],
+                'moveRight':  ["KeyD", "ArrowRight"],
+                'inventory': ["KeyQ", "KeyShift"],
+                "grab": ["Space", "KeyG", "Enter"],
+                'cancel': ['Backspace', 'Delete'],
+                'pause': ['Escape'],
+            },
+            controller: {
+                default: {
+                    buttons: {
+                        'north': 'inventory',
+                        'east': 'cancel',
+                        'south': 'grab',
+                        'select': 'inventory',
+                        'start': 'pause',
+                    },
+                    dpad: {
+                        south: 'moveDown',
+                        west: 'moveLeft',
+                        east: 'moveRight',
+                        north: 'moveUp'
+                    },
+                    sticks: {
+                        left: {
+                            'moveLeft': {min: 225-22.5, max: 315+22.5 },
+                            'moveRight': {min: 45-22.5, max: 135+22.5},
+                            'moveDown': { min: 135-22.5, max: 225+22.5 },
+                            'moveUp': [{ min:315-22.5, max: 360 }, { min: 0, max: 45+22.5 }]
+                        },
+                        right: {
+                            'moveLeft': {min: 225-22.5, max: 315+22.5 },
+                            'moveRight': {min: 45-22.5, max: 135+22.5},
+                            'moveDown': { min: 135-22.5, max: 225+22.5 },
+                            'moveUp': [{ min:315-22.5, max: 360 }, { min: 0, max: 45+22.5 }]
+                        }
+                    }
+                }
+            },
+        });
+        Gotti.emit('game-input', gameInput);
+
         let song;
         const tryPlaySong = async () => {
             try {
@@ -76,7 +123,7 @@ export default {
                 }, 200)
             }
         }
-        tryPlaySong();
+        // tryPlaySong();
 
         const canvas = document.getElementById("game-canvas")
         canvas.style.opacity = `1`;
@@ -121,16 +168,37 @@ export default {
         tileWorld.bindCameraCenter(panCameraPosition);
         tileWorld.update(1);
 
-        const gottimation = await Gottimation.Init(`Assets/evil_farm_anis`, {lazyLoadTextures: true, renderer, preloadAtlasDefaults: true }, tileWorld.loader);
+        const gottimation = await Gottimation.Init(`Assets/acsnes`, {lazyLoadTextures: true, renderer, preloadAtlasDefaults: true }, tileWorld.loader);
         const pathfinder = new GridPathFinder();
         const res = await loadSpritesAndData();
         pathfinder.create(16, 1024/16, 1024/16);
-        const treeTextures : Array<{ shadow: PIXI.Texture, tree: PIXI.Texture, shadowOffsetX?: number, shadowOffsetY?: number }> = [];
-        for(let i = 1; i < 5; i++) {
-            treeTextures.push({
-                tree: res['farm_sprites'].textures[`tree${i}.png`],
-                shadow: res['farm_sprites'].textures[`tree${i}shadow.png`]
-            })
+        const textures = res['actextures'].textures;
+        const inventoryTextures : InventoryTextures = {
+            background: textures['inventory_background.png'],
+            contextMenu: {
+                background: textures['context_menu_background.png'],
+                selectedBackground: textures['context_menu_selected_option_background.png'],
+                pointer: textures['context_menu_pointer.png'],
+            },
+            item: {
+                emptyBackground: textures['empty_inventory_slot.png'],
+                pointer: textures['inventory_pointer.png'],
+                selectedBackground: textures['selected_inventory_icon.png']
+            }
+        }
+        const gameTextures : GameTextures = {
+            inventory: inventoryTextures,
+            items: {
+                hole: textures['hole_dug_up.png'],
+                tree: textures['tree.png'],
+                seeds1: textures['item0_seeds1.png'],
+                seeds2: textures['item0_seeds2.png'],
+                seeds3: textures['item0_seeds3.png'],
+                seeds4: textures['item0_seeds4.png'],
+                beehive: textures['beehive.png'],
+                honey: textures['honey_icon.png'],
+                bee: textures['bee.png']
+            }
         }
 
         let panningRight = true;
@@ -193,6 +261,8 @@ export default {
                     tileWorld.update(1);
                 }
                 return resolve({
+                    gameInput,
+                    gameTextures,
                     fadeIn,
                     fadeOut,
                     gameStateData,
@@ -201,7 +271,6 @@ export default {
                     spouseCharacter: '',
                     renderer,
                     gottimation,
-                    treeTextures,
                     tileWorld,
                     pathfinder,
                 });
@@ -213,19 +282,13 @@ export default {
 const loadSpritesAndData = async () => {
     const loader = PIXI.loader;
     loader.reset();
-    const fonts = [
-     //   { name: 'ns-small', url: 'Assets/fonts/ns-small.fnt'},
+    [
+        { name: 'ns-small', url: 'Assets/fonts/ns-small.fnt'},
         { name: 'stroke-small', url: 'Assets/fonts/stroke-small.fnt'},
-        { name: 'medium-stroke', url: 'Assets/fonts/medium-stroke.fnt'},
-        { name: 'medium', url: 'Assets/fonts/medium.fnt'},
-        { name: 'large-stroke', url: 'Assets/fonts/large-stroke.fnt'},
-        { name: 'large', url: 'Assets/fonts/large.fnt'},
-        { name: 'xsmall', url: 'Assets/fonts/xsmall.fnt'},
-        { name: 'xsmall-stroke', url: 'Assets/fonts/xsmall-stroke.fnt'}
     ].forEach(asset => {
         loader.add(asset.name, asset.url);
     });
-    loader.add('farm_sprites', 'Assets/sprites/evilfarmsprites.json');
+    loader.add('actextures', 'Assets/sprites/actextures.json');
     return new Promise((resolve, reject) => {
         loader.load((loader, resources) => {
             return resolve(resources);

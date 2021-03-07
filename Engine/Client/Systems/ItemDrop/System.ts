@@ -55,6 +55,12 @@ export class ItemDropSystem extends ClientSystem {
         this.globals.tileWorld.use(this.droppedItemCollisionPlugin)
         this.addApi(this.dropItem);
     }
+
+    public dropItemFromPlayer(itemName: string) {
+        const p = this.globals.clientPlayer.getPosition();
+        const direction = this.globals.clientPlayer.getComponent(SYSTEMS.PLAYER_ANIMATION).skeleton.direction;
+    }
+
     public dropItem(itemName: string, worldX: number, worldY: number, destroyTimeout?: number, layerIndex?: number, data?: any, texture?: PIXI.Texture) {
         layerIndex = layerIndex === 0 || layerIndex ? layerIndex : this.globals.clientPlayer.gameObject.layerIndex-1;
         if(!texture) throw new Error(`No texture found with item name: ${itemName}`);

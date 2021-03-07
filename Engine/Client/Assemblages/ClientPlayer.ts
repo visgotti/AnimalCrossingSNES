@@ -25,6 +25,7 @@ export class ClientPlayer extends Entity {
         inventory: false,
         grab: false,
         sprint: false,
+        cancel: false,
     };
 
     constructor() {

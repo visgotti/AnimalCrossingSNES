@@ -1,0 +1,1 @@
+{"id":3,"endTime":1000,"frameData":[{"time":0,"bones":[{"id":"2","slotId":8,"hide":false}]},{"time":250,"bones":[{"id":"2","slotId":7}]},{"time":500,"bones":[{"id":"2","slotId":9}]},{"time":750,"bones":[{"id":"2","slotId":7}]}],"direction":"west","actionId":2}

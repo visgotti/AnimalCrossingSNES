@@ -1,0 +1,49 @@
+{
+  "id": 6,
+  "endTime": 1000,
+  "frameData": [
+    {
+      "time": 0,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 3,
+          "hide": false,
+          "name": "base"
+        }
+      ]
+    },
+    {
+      "time": 250,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 2,
+          "name": "base"
+        }
+      ]
+    },
+    {
+      "time": 500,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 1,
+          "name": "base"
+        }
+      ]
+    },
+    {
+      "time": 750,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 2,
+          "name": "base"
+        }
+      ]
+    }
+  ],
+  "direction": "south",
+  "actionId": 2
+}

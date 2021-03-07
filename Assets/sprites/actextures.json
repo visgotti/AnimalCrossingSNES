@@ -1,0 +1,142 @@
+{"frames": {
+
+"beehive.png":
+{
+	"frame": {"x":100,"y":33,"w":26,"h":40},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":0,"w":26,"h":40},
+	"sourceSize": {"w":32,"h":40}
+},
+"context_menu_background.png":
+{
+	"frame": {"x":64,"y":33,"w":56,"h":34},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":56,"h":34},
+	"sourceSize": {"w":56,"h":34}
+},
+"context_menu_pointer.png":
+{
+	"frame": {"x":21,"y":96,"w":25,"h":18},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":25,"h":18},
+	"sourceSize": {"w":25,"h":18}
+},
+"context_menu_selected_option_background.png":
+{
+	"frame": {"x":117,"y":1,"w":25,"h":10},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":25,"h":10},
+	"sourceSize": {"w":25,"h":10}
+},
+"empty_inventory_slot.png":
+{
+	"frame": {"x":67,"y":91,"w":12,"h":12},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":12,"h":12},
+	"sourceSize": {"w":12,"h":12}
+},
+"hole_dug_up.png":
+{
+	"frame": {"x":100,"y":75,"w":14,"h":11},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":14,"h":11},
+	"sourceSize": {"w":14,"h":11}
+},
+"honey_icon.png":
+{
+	"frame": {"x":41,"y":96,"w":24,"h":24},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":24},
+	"sourceSize": {"w":24,"h":24}
+},
+"inventory_background.png":
+{
+	"frame": {"x":1,"y":1,"w":114,"h":30},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":114,"h":30},
+	"sourceSize": {"w":114,"h":30}
+},
+"inventory_pointer.png":
+{
+	"frame": {"x":1,"y":96,"w":18,"h":25},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":18,"h":25},
+	"sourceSize": {"w":18,"h":25}
+},
+"item0_seeds1.png":
+{
+	"frame": {"x":67,"y":105,"w":12,"h":12},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":12,"h":12},
+	"sourceSize": {"w":12,"h":12}
+},
+"item1_seeds2.png":
+{
+	"frame": {"x":81,"y":91,"w":12,"h":12},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":12,"h":12},
+	"sourceSize": {"w":12,"h":12}
+},
+"item2_seeds3.png":
+{
+	"frame": {"x":81,"y":105,"w":12,"h":12},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":12,"h":12},
+	"sourceSize": {"w":12,"h":12}
+},
+"item3_seeds4.png":
+{
+	"frame": {"x":95,"y":91,"w":12,"h":12},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":12,"h":12},
+	"sourceSize": {"w":12,"h":12}
+},
+"item4_seeds5.png":
+{
+	"frame": {"x":95,"y":105,"w":12,"h":12},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":12,"h":12},
+	"sourceSize": {"w":12,"h":12}
+},
+"selected_inventory_icon.png":
+{
+	"frame": {"x":109,"y":88,"w":12,"h":12},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":12,"h":12},
+	"sourceSize": {"w":12,"h":12}
+},
+"tree.png":
+{
+	"frame": {"x":1,"y":33,"w":61,"h":61},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":3,"w":61,"h":61},
+	"sourceSize": {"w":64,"h":64}
+}},
+"animations": {
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "actextures.png",
+	"format": "RGBA8888",
+	"size": {"w":128,"h":122},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:ebf32fea2d5aedbaba1c8f7e9823dcdf:988ba22d3243e59451f17c13163cb060:02d787503ba28f2cf2c7886a3dac8a0f$"
+}
+}

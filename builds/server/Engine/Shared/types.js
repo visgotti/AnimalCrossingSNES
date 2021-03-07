@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GameValues = exports.NPC_TYPES = exports.EntityTypes = exports.defaultGameData = exports.ItemTypes = void 0;
+exports.GameValues = exports.NPC_TYPES = exports.EntityTypes = exports.BugTypes = exports.defaultGameData = exports.ItemTypes = void 0;
 var ItemTypes;
 (function (ItemTypes) {
     ItemTypes[ItemTypes["TREE"] = 0] = "TREE";
@@ -42,6 +42,11 @@ function defaultGameData(playerName, startingSpawn) {
     };
 }
 exports.defaultGameData = defaultGameData;
+var BugTypes;
+(function (BugTypes) {
+    BugTypes[BugTypes["BEE"] = 0] = "BEE";
+    BugTypes[BugTypes["BUTTERFLY"] = 1] = "BUTTERFLY";
+})(BugTypes = exports.BugTypes || (exports.BugTypes = {}));
 var EntityTypes;
 (function (EntityTypes) {
     EntityTypes[EntityTypes["ClientPlayer"] = 0] = "ClientPlayer";
@@ -49,6 +54,7 @@ var EntityTypes;
     EntityTypes[EntityTypes["NPC"] = 2] = "NPC";
     EntityTypes[EntityTypes["Tree"] = 3] = "Tree";
     EntityTypes[EntityTypes["DroppedItem"] = 4] = "DroppedItem";
+    EntityTypes[EntityTypes["Bug"] = 5] = "Bug";
 })(EntityTypes = exports.EntityTypes || (exports.EntityTypes = {}));
 var NPC_TYPES;
 (function (NPC_TYPES) {

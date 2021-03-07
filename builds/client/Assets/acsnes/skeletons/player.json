@@ -1,0 +1,72 @@
+{
+    "actions": {
+        "2": "walk"
+    },
+    "id": "player",
+    "name": "player",
+    "boneNames": {},
+    "actionIds": [
+        2
+    ],
+    "directions": [
+        "west",
+        "east",
+        "north",
+        "south"
+    ],
+    "attachmentSlotIds": [],
+    "atlasIds": [
+        1
+    ],
+    "animationIds": [
+        "2",
+        "3",
+        "5",
+        "6"
+    ],
+    "setupData": {
+        "frames": {
+            "east": {
+                "bones": [
+                    {
+                        "id": "2",
+                        "slotId": 7
+                    }
+                ]
+            },
+            "north": {
+                "bones": [
+                    {
+                        "id": "2",
+                        "slotId": 5
+                    }
+                ]
+            },
+            "south": {
+                "bones": [
+                    {
+                        "id": "2",
+                        "slotId": 2
+                    }
+                ]
+            },
+            "west": {
+                "bones": [
+                    {
+                        "id": "2",
+                        "slotId": 7
+                    }
+                ]
+            }
+        },
+        "bones": [
+            {
+                "name": "base",
+                "id": 2
+            }
+        ],
+        "boneOrder": [
+            2
+        ]
+    }
+}

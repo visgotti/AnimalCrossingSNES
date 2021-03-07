@@ -13,10 +13,9 @@ export class PlayerManagerSystem extends ClientSystem {
     }
     private createInitialClientPlayer() {
         this.globals.clientPlayer = this.initializeEntity(new ClientPlayer(), this.globals.gameStateData);
-        this.dispatchLocal({
+        this.dispatchAllLocal({
             type: MESSAGES.CLIENT_PLAYER_ENTITY_INITIALIZED,
             data: this.globals.clientPlayer,
-            to: [SYSTEMS.LEVEL, /*SYSTEMS.TREE,*/ SYSTEMS.GAME_STATE]
         });
     }
 

@@ -51,6 +51,11 @@
 <script>
 import Game from './components/Game.vue';
 import Gotti from 'gotti';
+
+
+let gameInput;
+let tick;
+
 export default {
   name: 'app',
   components: {
@@ -73,6 +78,9 @@ export default {
     }, 100);
   },
   created() {
+    Gotti.on('game-input', (g) => {
+      gameInput = g;
+    });
     Gotti.on('initial-map-load', () => {
       this.mapLoaded = true;
     });
@@ -102,6 +110,8 @@ export default {
     }
   },
   methods: {
+    getFocusIndex() {
+    },
     handleKeyDown(e) {
       const isEnterKey = e.which == 13 || e.key === "Enter" || e.code === "Enter";
       if(isEnterKey && !this.gameStarted && !this.chosingName && !this.starting) {

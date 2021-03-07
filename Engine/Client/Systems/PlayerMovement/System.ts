@@ -60,7 +60,7 @@ export class PlayerMovementSystem extends ClientSystem {
     }
 
     update(delta: any): void {
-        if(this.clientPlayer) {
+        if(this.clientPlayer && !this.$api.isInventoryOpen()) {
             const pmc : PlayerMovementComponent = this.getSystemComponent(this.clientPlayer);
             const actionComponent : PlayerActionComponent = this.clientPlayer.getComponent(SYSTEMS.PLAYER_ACTION);
             if(actionComponent?.action) {
