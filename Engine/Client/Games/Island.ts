@@ -3,7 +3,7 @@ import {defaultGameData, GameTextures, InventoryTextures, StartGameData} from ".
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 import * as World from '../lib/tileyo.js';
 import DebugColliderPlugin from '../lib/TileYoPlugins/DebugPlugin.js';
-//World.use(DebugColliderPlugin);
+World.use(DebugColliderPlugin);
 import { Gottimation } from "../lib/Gottimation/Runtime/Gottimation";
 import {GridPathFinder} from "../lib/Pathfinder";
 const resolutionSettings = {
@@ -33,6 +33,7 @@ import { BugMovementSystem } from "../Systems/BugMovement/System";
 import { BugSpawnSystem } from "../Systems/BugSpawn/System";
 import { BeeKeepSystem } from "../Systems/BeeKeep/System";
 import { FlowerSystem } from "../Systems/Flower/System";
+import { DigSystem } from "../Systems/Dig/System";
 
 import Gotti from 'gotti';
 import {getRandomNumber} from "../../Shared/Utils";
@@ -60,6 +61,7 @@ export default {
         BugSpawnSystem,
         BeeKeepSystem,
         FlowerSystem,
+        DigSystem,
     ],
     plugins: [],
     areas: [],
@@ -181,23 +183,80 @@ export default {
                 pointer: textures['context_menu_pointer.png'],
             },
             item: {
-                emptyBackground: textures['empty_inventory_slot.png'],
+                emptyBackground: textures['unselected_inventory_icon.png'],
                 pointer: textures['inventory_pointer.png'],
                 selectedBackground: textures['selected_inventory_icon.png']
             }
         }
         const gameTextures : GameTextures = {
+            animations: {
+                bugs: {
+                    bee: [textures['bee1.png'], textures['bee2.png']]
+                }
+            },
+            honey: textures['honey_icon.png'],
+            dialogue: {
+                npc: {
+                    nameLabel: textures['dialogue_name_background.png'],
+                    diaglogueBackground: textures['dialogue_background.png'],
+                    continueIndicator: textures['dialogue_name_background.png'],
+                },
+                response: {
+                    background:textures['context_menu_background.png'],
+                    selectedOptionBackground: textures['context_menu_selected_option_background.png'],
+                    pointer:  textures['context_menu_pointer.png'],
+                }
+            },
             inventory: inventoryTextures,
             items: {
-                hole: textures['hole_dug_up.png'],
-                tree: textures['tree.png'],
-                seeds1: textures['item0_seeds1.png'],
-                seeds2: textures['item0_seeds2.png'],
-                seeds3: textures['item0_seeds3.png'],
-                seeds4: textures['item0_seeds4.png'],
-                beehive: textures['beehive.png'],
-                honey: textures['honey_icon.png'],
-                bee: textures['bee.png']
+                icons: {
+                    hole: textures['hole_dug_up.png'],
+                    tree: textures['tree.png'],
+                    seeds1: textures['item0_seeds1.png'],
+                    seeds2: textures['item0_seeds2.png'],
+                    seeds3: textures['item0_seeds3.png'],
+                    seeds4: textures['item0_seeds4.png'],
+                    seeds5: textures['item0_seeds5.png'],
+                    pedals1: textures['pedal1.png'],
+                    pedals2: textures['pedal2.png'],
+                    pedals3: textures['pedal3.png'],
+                    pedals4: textures['pedal4.png'],
+                    pedals5: textures['pedal5.png'],
+                    flower1: textures['pedal1.png'],
+                    flower2: textures['pedal2.png'],
+                    flower3: textures['pedal3.png'],
+                    flower4: textures['pedal3.png'],
+                    flower5: textures['pedal5.png'],
+                    beehive: textures['beehive.png'],
+                    bee: textures['bee.png'],
+                    red_bed: textures['items5_bed1.png'],
+                    green_bed: textures['items6_bed2.png'],
+                    blue_bed: textures['items7_bed3.png']
+                },
+                placed: {
+                    hole: textures['hole_dug_up.png'],
+                    tree: textures['tree.png'],
+                    seeds1: textures['item0_seeds1.png'],
+                    seeds2: textures['item0_seeds2.png'],
+                    seeds3: textures['item0_seeds3.png'],
+                    seeds4: textures['item0_seeds4.png'],
+                    seeds5: textures['item0_seeds5.png'],
+                    pedals1: textures['pedal1.png'],
+                    pedals2: textures['pedal1.png'],
+                    pedals3: textures['pedal1.png'],
+                    pedals4: textures['pedal1.png'],
+                    pedals5: textures['pedal1.png'],
+                    flower1: textures['pedal1.png'],
+                    flower2: textures['pedal2.png'],
+                    flower3: textures['pedal3.png'],
+                    flower4: textures['pedal3.png'],
+                    flower5: textures['pedal5.png'],
+                    beehive: textures['beehive.png'],
+                    bee: textures['bee.png'],
+                    red_bed: textures['placeable_bed1.png'],
+                    green_bed: textures['placeable_bed2.png'],
+                    blue_bed: textures['placeable_bed3.png']
+                }
             }
         }
 

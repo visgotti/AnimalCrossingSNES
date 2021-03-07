@@ -5,16 +5,28 @@ import {EntityTypes, PlayerInput} from "../../../Shared/types";
 import {PlayerMovementComponent} from "./Component";
 import System from "gotti/lib/core/System/System";
 import { Position as PositionComponent } from "../../../Shared/Components/Position";
-import {SYSTEMS} from "../../../Shared/Constants";
+import {COLLIDER_TAGS, SYSTEMS} from "../../../Shared/Constants";
 import {NPC} from "../../Assemblages/NPC";
 import {NPCMovementComponent} from "../NPCMovement/Component";
 import {PlayerActionComponent} from "../PlayerAction/Component";
 import {getPercentage} from "../../../Shared/Utils";
 
+
+const AheadOfPlayerOffsets = {
+    north: { x: 0, y: 0 },
+    south: { x: 0, y: 25 },
+    west: { x: -10, y: 17 },
+    east: { x: 10, y: 17  },
+}
+
 export class PlayerMovementSystem extends ClientSystem {
     private remotePlayers : Array<RemotePlayer> = [];
     private npcPlayers : Array<NPC> = [];
     private clientPlayer : ClientPlayer;
+    private previousDirection : string;
+
+    private aheadOfPlayerGameObject : any;
+
     constructor() {
         super(SYSTEMS.PLAYER_MOVEMENT);
     }
@@ -27,6 +39,18 @@ export class PlayerMovementSystem extends ClientSystem {
         if(!entity.hasComponent(SYSTEMS.POSITION)) throw new Error(`Entities added with a player movement component should have a position component added first always.`)
         if(entity.type === EntityTypes.ClientPlayer) {
             this.clientPlayer = entity;
+            const p = this.clientPlayer.getPosition();
+            this.aheadOfPlayerGameObject = this.globals.tileWorld.addGameObject({
+                texture: PIXI.Texture.EMPTY,
+                position: { ...p },
+                layer: 1,
+                colliders: [{
+                    layer: 2,
+                    dynamic: true,
+                    shapeData: { x: 0, y: 0, w: 20, h: 20 },
+                    tags: [COLLIDER_TAGS.in_front_of_client_player]
+                }]
+            });
         } else if (entity.type === EntityTypes.RemotePlayer) {
             this.remotePlayers.push(entity);
         } else if (entity.type === EntityTypes.NPC) {
@@ -36,6 +60,12 @@ export class PlayerMovementSystem extends ClientSystem {
             throw new Error(`Unexpected entity: ${entity.id} had a player movement entity`)
         }
     }
+
+    public getAheadOfPlayerPosition() : { x: number, y: number } {
+        const { x, y, w, h } = this.aheadOfPlayerGameObject.colliders[0].shapeData
+        return { x: (x + w / 2), y: (y + h / 2) }
+    }
+
     onEntityRemovedComponent(entity: any, component) {
         if(entity.type === EntityTypes.ClientPlayer) {
             if(this.clientPlayer && entity !== this.clientPlayer) { throw new Error(`Unexpected entity marked as client losing component.`)}
@@ -59,8 +89,12 @@ export class PlayerMovementSystem extends ClientSystem {
         return s;
     }
 
+    onInit() {
+        this.addApi(this.getAheadOfPlayerPosition);
+    }
+
     update(delta: any): void {
-        if(this.clientPlayer && !this.$api.isInventoryOpen()) {
+        if(this.clientPlayer && !this.$api.isInventoryOpen() && !this.$api.isInDialogue()) {
             const pmc : PlayerMovementComponent = this.getSystemComponent(this.clientPlayer);
             const actionComponent : PlayerActionComponent = this.clientPlayer.getComponent(SYSTEMS.PLAYER_ACTION);
             if(actionComponent?.action) {
@@ -73,9 +107,20 @@ export class PlayerMovementSystem extends ClientSystem {
             const deltaX = x * delta;
             const deltaY = y * delta;
             const p : PositionComponent = this.clientPlayer.getComponent(SYSTEMS.POSITION);
+            let finalPosition = p.getPosition();
             if(x || y) {
-                p.setPositionByDeltas(deltaX, deltaY);
+                finalPosition = p.setPositionByDeltas(deltaX, deltaY);
             }
+            let offsets;
+            if(pmc.movingDirection !== null) {
+                offsets = AheadOfPlayerOffsets[pmc.movingDirection];
+            } else {
+                const aniComponent = this.clientPlayer.getComponent(SYSTEMS.PLAYER_ANIMATION);
+                const dir = aniComponent.skeleton?.direction || this.clientPlayer.getComponent(SYSTEMS.GAME_STATE).data.direction;
+                offsets = AheadOfPlayerOffsets[dir];
+            }
+            this.aheadOfPlayerGameObject.setPosition(finalPosition.x+offsets.x, finalPosition.y+offsets.y);
+            console.log('the ahead of player game object position became', this.aheadOfPlayerGameObject.worldX, this.aheadOfPlayerGameObject.worldY)
         }
         for(let i = 0 ; i < this.npcPlayers.length; i++) {
             const pmc : NPCMovementComponent = this.npcPlayers[i].getComponent(SYSTEMS.NPC_MOVEMENT);

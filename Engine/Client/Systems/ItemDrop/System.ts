@@ -29,7 +29,7 @@ export class ItemDropSystem extends ClientSystem {
         this.droppedItemCollisionPlugin = {
             type: 'collision',
             name: 'inventory',
-            tagAs: [COLLIDER_TAGS.client_player],
+            tagAs: [COLLIDER_TAGS.in_front_of_client_player],
             tagBs: [COLLIDER_TAGS.dropped_item],
             onCollisionStart: handleCollision,
             onCollision: handleCollision,
@@ -61,9 +61,11 @@ export class ItemDropSystem extends ClientSystem {
         const direction = this.globals.clientPlayer.getComponent(SYSTEMS.PLAYER_ANIMATION).skeleton.direction;
     }
 
-    public dropItem(itemName: string, worldX: number, worldY: number, destroyTimeout?: number, layerIndex?: number, data?: any, texture?: PIXI.Texture) {
-        layerIndex = layerIndex === 0 || layerIndex ? layerIndex : this.globals.clientPlayer.gameObject.layerIndex-1;
+    public dropItem(itemName: string, worldX: number, worldY: number, destroyTimeout?: number) {
+        const layerIndex = 1;
+        const texture = this.globals.gameTextures.items.placed[itemName];
         if(!texture) throw new Error(`No texture found with item name: ${itemName}`);
+
         const gameObject = this.globals.tileWorld.addGameObject({
             texture,
             position: { x: worldX, y: worldY },
@@ -75,8 +77,26 @@ export class ItemDropSystem extends ClientSystem {
                 tags: [COLLIDER_TAGS.dropped_item],
             }],
         });
-        const entity = new DroppedItem(++this.droppedItemSeq);
-        this.initializeEntity(entity, { gameObject, itemName, data });
+
+        const entity = new DroppedItem(this.$api.getUid());
+        entity.gameObject = gameObject;
+        gameObject.entity = entity;
+
+        this.dispatchLocal({
+            to: [SYSTEMS.GAME_STATE],
+            type: MESSAGES.DROP_ITEM,
+            data: {
+                level: 'island',
+                data: {
+                    uid: entity.id,
+                    name: itemName,
+                    x: worldX,
+                    y: worldY,
+                }
+            }
+        })
+
+        this.initializeEntity(entity, { gameObject, itemName });
         if(destroyTimeout) {
             entity.destroyTimeout = setTimeout(() => {
                 delete entity.destroyTimeout;
@@ -92,10 +112,13 @@ export class ItemDropSystem extends ClientSystem {
             clearTimeout(entity.destroyTimeout);
             delete entity.destroyTimeout;
         }
-        entity.gameObject.removeFromMap();
+        if(entity.gameObject) {
+            entity.gameObject.removeFromMap();
+            delete entity.gameObject.entity;
+            delete entity.gameObject;
+        }
         // these props are set inside the DroppedItem.ts assemblage initialize method. (called from this.initializeEntity)
-        delete entity.gameObject.entity;
-        delete entity.gameObject;
+
         this.droppedItems = this.droppedItems.filter( i => i !== entity);
     }
 

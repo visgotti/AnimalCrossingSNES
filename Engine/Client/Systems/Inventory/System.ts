@@ -45,7 +45,7 @@ export class InventorySystem extends ClientSystem {
     private backgroundSprite : PIXI.Sprite;
     private selectedBackgroundTexture : PIXI.Texture;
     private inventoryTextures : InventoryTextures;
-    private itemTextures : ItemTextures
+    private itemIconTextures : ItemTextures
 
     private inventorySlots : Array<InventorySlot> = [];
     private currentSelectedItemOptionIndex : number;
@@ -147,7 +147,7 @@ export class InventorySystem extends ClientSystem {
 
     onStart() {
         this.inventoryTextures = this.globals.gameTextures.inventory;
-        this.itemTextures = this.globals.gameTextures.items;
+        this.itemIconTextures = this.globals.gameTextures.items.icons;
         this.inventoryPointer = new PIXI.Sprite();
         this.backgroundSprite = new PIXI.Sprite(this.inventoryTextures.background);
         this.inventoryContainer.addChild(this.backgroundSprite);
@@ -204,7 +204,7 @@ export class InventorySystem extends ClientSystem {
         this.removeInventorySlot(slotIndex);
         const slot = this.inventorySlots[slotIndex];
         slot.itemName = itemName;
-        const texture = this.itemTextures[itemName];
+        const texture = this.itemIconTextures[itemName];
         slot.itemSprite.texture = texture;
         slot.quantity = totalQuantity;
     }

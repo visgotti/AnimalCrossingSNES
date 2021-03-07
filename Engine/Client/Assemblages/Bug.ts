@@ -15,8 +15,10 @@ export type BugSpawnData = {
 }
 
 export class Bug extends Entity {
-    constructor(id) {
+    readonly bugType : BugTypes;
+    constructor(id, type: BugTypes) {
         super(id, EntityTypes.Bug)
+        this.bugType = type;
     }
     initialize(data?: BugSpawnData) {
         this.addComponent(new Position(data.position.x, data.position.y));

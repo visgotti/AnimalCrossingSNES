@@ -3,6 +3,7 @@ import {SYSTEMS} from "../../../Shared/Constants";
 import {Bug} from "../../Assemblages/Bug";
 import {Position} from "../../../Shared/Components/Position";
 import {getRandomNumber} from "../../../Shared/Utils";
+import {BugTypes} from "../../../Shared/types";
 
 export class BugMovementComponent extends Component {
     private timeSinceLastMovementChange : number = 0;
@@ -10,6 +11,9 @@ export class BugMovementComponent extends Component {
     private velocity : number;
     private angle : number;
     private position : Position;
+
+    private bugType : BugTypes;
+
     constructor() {
         super(SYSTEMS.BUG_MOVEMENT);
     }
@@ -30,6 +34,7 @@ export class BugMovementComponent extends Component {
     }
 
     onAdded(entity: Bug) {
+        this.bugType = entity.bugType;
         this.position = entity.getComponent(SYSTEMS.POSITION);
         if(!this.position) throw new Error(`Expected position`);
     }

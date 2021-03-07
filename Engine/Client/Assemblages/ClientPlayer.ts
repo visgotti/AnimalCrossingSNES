@@ -37,7 +37,7 @@ export class ClientPlayer extends Entity {
         this.addComponent(new InputComponent(this.playerInput));
         this.addComponent(new Position(data.position.x, data.position.y));
         this.addComponent(new PlayerMovementComponent(GameValues.PlayerSpeed));
-        this.addComponent(new PlayerAnimationComponent('player', 'default'));
+        this.addComponent(new PlayerAnimationComponent('player'));
         this.addComponent(new PlayerActionComponent());
         this.addComponent(new InventoryComponent());
         this.addComponent(new BugCatchComponent());

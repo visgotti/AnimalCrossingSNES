@@ -8,7 +8,7 @@ export class DroppedItem extends Entity {
     constructor(droppedItemSeq: number) {
         super(droppedItemSeq, EntityTypes.DroppedItem);
     }
-    initialize(data?: { gameObject: any, itemName: string, data: any }): void {
+    initialize(data?: { gameObject: any, itemName: string }): void {
         this.gameObject = data.gameObject;
         this.gameObject.entity = this;
         this.addComponent(new ItemDropComponent(data.itemName))

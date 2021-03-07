@@ -8,6 +8,8 @@ type InventoryChangeEvent = { type: 'add' | 'remove' | 'update', name : string, 
 
 export class GameStateSystem extends ClientSystem {
     private gameState : GameStateComponent;
+    private lastUid : number = 0;
+
     constructor() {
         super(SYSTEMS.GAME_STATE)
         this.handleInventoryChange = this.handleInventoryChange.bind(this);
@@ -16,8 +18,18 @@ export class GameStateSystem extends ClientSystem {
     onClear(): void {
     }
 
+    onInit() {
+        this.addApi(this.getUid);
+    }
+
     onLocalMessage(message): void {
         switch(message.type) {
+            case MESSAGES.ADDED_HOLE:
+                this.handleAddedHole(message.data.x, message.data.y, message.data.uid);
+                break;
+            case MESSAGES.REMOVED_HOLE:
+                this.handleRemovedDrop({ level: 'island', uid: message.data });
+                break;
             case MESSAGES.DROP_ITEM:
                 this.handleDrop(message.data);
                 break;
@@ -32,9 +44,15 @@ export class GameStateSystem extends ClientSystem {
         if(!found) throw new Error(`Didnt find level data for ${level}`);
         return found;
     }
+    private handleAddedHole(x: number, y: number, uid: number) {
+        const levelData = this.validateAndGetLevelStateObject('island');
+        levelData.state.items.push({
+            x, y, uid, name: 'hole'
+        });
+        this.gameState.save();
+    }
     private handleDrop(dropEvent: { level: string, data: DroppedItemData<FurnitureState | TreeState> }) {
         const { level, data } = dropEvent;
-        this.gameState.data.lastDroppedItemUid = Math.max(data.uid, this.gameState.data.lastDroppedItemUid);
         const levelData = this.validateAndGetLevelStateObject(level);
         levelData.state.items.push({ ...data });
         this.gameState.save();
@@ -74,10 +92,21 @@ export class GameStateSystem extends ClientSystem {
 
     onEntityAddedComponent(entity: ClientPlayer, component: GameStateComponent) {
         this.gameState = component;
+        this.lastUid = component.data.lastUid;
+        this.dispatchAllLocal({
+            type: MESSAGES.GAME_STATE_INITIALIZED,
+            data: component.data
+        });
         // do the event listeners in a set timeout to make sure the entity has the inventory component when listening.
         setTimeout(() => {
             entity.on(PLAYER_EVENTS.INVENTORY_CHANGE, this.handleInventoryChange)
         });
+    }
+
+    public getUid() {
+        this.gameState.data.lastUid++;
+        this.gameState.save();
+        return this.gameState.data.lastUid
     }
 
     onServerMessage(message): any {

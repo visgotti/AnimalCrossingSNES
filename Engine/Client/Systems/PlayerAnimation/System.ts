@@ -7,8 +7,8 @@ import {COLLIDER_TAGS, SYSTEMS} from "../../../Shared/Constants";
 import {EntityTypes, NPC_TYPES} from "../../../Shared/types";
 
 export const DefaultPlayerColliders = (tags?: Array<string>) =>  [
-    { layer: 1, shapeData: { x: 32, y: 32, r: 16 }, dynamic: true, tags },
-    { layer: 1, shapeData: { x: -64, y: -64, w: 192, h: 192 }, tags: ['sort'], dynamic: true, data: { sortOffsetTop: 15 } }
+    { layer: 1, shapeData: { x: 10, y: 23, r: 10 }, dynamic: true, tags },
+    { layer: 1, shapeData: { x: -86, y: -86, w: 192, h: 192 }, tags: ['sort'], dynamic: true, data: { sortOffsetTop: 15 } }
 ]
 
 export class PlayerAnimationSystem extends ClientSystem {
@@ -70,6 +70,7 @@ export class PlayerAnimationSystem extends ClientSystem {
         this.globals.tileWorld.use(this.sortCollisionPlugin);
     }
 
+
     onEntityAddedComponent(entity: any, component: PlayerAnimationComponent) {
      //   console.error('added ani component.')
         if(!entity.hasComponent(SYSTEMS.PLAYER_MOVEMENT) && !entity.hasComponent(SYSTEMS.NPC_MOVEMENT)) {
@@ -89,7 +90,7 @@ export class PlayerAnimationSystem extends ClientSystem {
             if(entity.type === EntityTypes.ClientPlayer) {
                 tags.push('client_player', 'player')
                 colliderArray = DefaultPlayerColliders(tags);
-                colliderArray.push({ layer: 1, shapeData: { x: 48, y: 48, r: 32 }, dynamic: true, tags: [COLLIDER_TAGS.client_player_bug_detector] })
+                colliderArray.push({ layer: 1, shapeData: { x: 10, y: 18, r: 40 }, dynamic: true, tags: [COLLIDER_TAGS.client_player_bug_detector] })
                 // we have special logic for police npcs so do not add colliders to gameobject here, we do it inside the Police Assemblage.
             } else if(entity.type === EntityTypes.NPC) {
                 tags.push(COLLIDER_TAGS.npc);

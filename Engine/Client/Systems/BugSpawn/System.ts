@@ -1,12 +1,14 @@
 import {ClientSystem} from "gotti";
 import {MESSAGES, SYSTEMS} from "../../../Shared/Constants";
 import {getRandomNumber} from "../../../Shared/Utils";
+import {BugTypes} from "../../../Shared/types";
+import {Bug} from "../../Assemblages/Bug";
 
 export class BugSpawnSystem extends ClientSystem{
     private bugTypeLookup : {[bugName: string]: any} = {}
     private timeSinceLastSpawn : number = 0;
     private bugProbabilityLookup : {[bugName: string] : number } = {};
-    private previous30SpawnedBugs : Array<string> = [];
+    private previous30SpawnedBugs : Array<BugTypes> = [];
     constructor() {
         super(SYSTEMS.BUG_SPAWN)
     }
@@ -15,7 +17,7 @@ export class BugSpawnSystem extends ClientSystem{
     onLocalMessage(message): void {
         switch(message.type) {
             case MESSAGES.NEW_FLOWER:
-                this.bugProbabilityLookup['bee']++;
+                this.bugProbabilityLookup[BugTypes.BEE]++;
                 break;
         }
     }
@@ -26,7 +28,14 @@ export class BugSpawnSystem extends ClientSystem{
     onServerMessage(message): any {
     }
 
-    private getNextBugToSpawn() : string {
+    onEntityRemovedComponent(entity: any, component) {
+        this.dispatchAllLocal({
+            type: MESSAGES.REMOVED_BUG,
+            data: entity,
+        });
+    }
+
+    private getNextBugToSpawn() : BugTypes {
         const intervals = [];
         let sum = 0;
         Object.keys(this.bugProbabilityLookup).forEach(k => {
@@ -55,5 +64,19 @@ export class BugSpawnSystem extends ClientSystem{
     }
 
     update(delta: any): void {
+        this.timeSinceLastSpawn += delta;
+        if(this.timeSinceLastSpawn > 1) {
+            const spawn = this.getNextBugToSpawn();
+            if(spawn) {
+                const data = this.globals.itemData[spawn];
+                const bug = new Bug(this.$api.getUid(), spawn);
+                this.dispatchLocal({
+                    to: SYSTEMS.GAME_STATE,
+                    data: bug,
+                    type: MESSAGES.SPAWNED_BUG,
+                });
+                this.timeSinceLastSpawn = 0;
+            }
+        }
     }
 }

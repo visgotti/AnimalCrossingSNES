@@ -1,40 +1,15 @@
 import {ClientSystem} from "gotti";
-import {SYSTEMS} from "../../../Shared/Constants";
-import {ClientPlayer} from "../../Assemblages/ClientPlayer";
-import {PlayerInput} from "../../../Shared/types";
+import {MESSAGES, SYSTEMS} from "../../../Shared/Constants";
 import {PlayerActionComponent} from "./Component";
 
-type ItemData = { hotkey: number, displaySprite: PIXI.Sprite, backgroundSprite: PIXI.Sprite, description?: string, displayName?: string }
-type ActionItemStates = {
-    hatchet: { state: HatchetStates } & ItemData ,
-    hoe:{ state: HoeStates } & ItemData ,
-    pole: { state: PoleStates } & ItemData ,
-    watercan: { state: WaterCanStates } & ItemData ,
-}
-type WaterCanStates = 'default' | 'full'
-type HatchetStates = 'default';
-type HoeStates = 'default';
-type PoleStates = 'default';
-
-type ValidTools = 'hatchet' | 'hoe' | 'watercan' | 'pole';
-
-const SpriteToolItemSize= 40;
+type ValidTools = 'net' | 'shovel'
 
 export class PlayerActionSystem extends ClientSystem {
-    private ui : PIXI.Container;
-    private _currentSelectedTool : ValidTools = 'hatchet';
-
+    private clientPlayerComponent : PlayerActionComponent;
     constructor() {
         super(SYSTEMS.PLAYER_ACTION);
-        this._currentSelectedTool = 'hatchet';
     }
-    onInit() {
-        // @ts-ignore
-   //     this.itemBackgroundTextures.default = makeRectTexture(SpriteToolItemSize, SpriteToolItemSize, 0x000000, 0xffffff, 2, this.globals.renderer);
-        // @ts-ignore
-  //      this.itemBackgroundTextures.selected = makeRectTexture(SpriteToolItemSize, SpriteToolItemSize, 0x000000, 0xe6e073, 2, this.globals.renderer);
-        this.addApi(this.setTool);
-    }
+    onInit() {}
 
     onClear(): void {
     }
@@ -42,21 +17,14 @@ export class PlayerActionSystem extends ClientSystem {
     private makeToolUi() {
     }
 
+
+
     private repositionToolUI() {
     }
 
     onStart() {
-        this.repositionToolUI = this.repositionToolUI.bind(this);
-        this.makeToolUi();
-        document.addEventListener('resize', this.repositionToolUI);
     }
-    onStop() {
-        document.removeEventListener('resize', this.repositionToolUI);
-    }
-
-    public setTool(v : ValidTools) {
-    }
-
+    onStop() {}
 
     onPeerMessage(peerId: number | string, message): any {
     }
@@ -64,11 +32,29 @@ export class PlayerActionSystem extends ClientSystem {
     onServerMessage(message): any {
     }
 
+    onEntityAddedComponent(entity: any, component) {
+        this.clientPlayerComponent = component;
+    }
+
     update(delta: any): void {
         if(this.globals.clientPlayer) {
         }
     }
+
+    private handlePlayerEquipItem(itemName: string) {
+        if(itemName === 'net' || itemName === 'shovel' || itemName === 'axe') {
+            this.clientPlayerComponent.actionAttachment = itemName;
+        } else {
+            this.clientPlayerComponent.actionAttachment = null;
+        }
+    }
+
     onLocalMessage(message): void {
+        switch(message.type) {
+            case MESSAGES.USE_ITEM:
+                this.handlePlayerEquipItem(message.data);
+                break;
+        }
     }
 }
 

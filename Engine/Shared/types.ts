@@ -14,10 +14,21 @@ export type FurnitureState = {
 export type BugState = {
 }
 
+export type FlowerState = {
+    plantedByPlayer: boolean,
+    elapsedTimeAlive : number;
+}
+
+export type FlowerTypes ='flower1' | 'flower2' | 'flower3' | 'flower4';
+
 export enum ItemTypes {
+    TOOL,
     TREE,
+    FLOWER,
+    BUG,
     FURNITURE,
     RESOURCE,
+    PLANTABLE,
 }
 
 export type DroppedItemData<T> = {
@@ -34,9 +45,8 @@ export type LevelData = {
     droppableItems: Array<ItemTypes>,
     state: LevelStateData,
 }
-
 export type LevelStateData =  {
-    items: Array<DroppedItemData<FurnitureState | TreeState | BugState>>,
+    items: Array<DroppedItemData<FurnitureState | TreeState | BugState | FlowerState>>,
     [prop: string]: any,
 }
 export type IslandStateData = LevelStateData & {
@@ -45,6 +55,10 @@ export type IslandStateData = LevelStateData & {
 export type HouseStateData = LevelStateData & {
     wall: 'default' | 'fancy',
     floor: 'default' | 'fancy',
+}
+
+export type GameData = {
+    items: {[itemName: string]: GlobalItemData },
 }
 
 export type TaskStateData = {
@@ -57,7 +71,8 @@ export type StartGameData = {
 export function defaultGameData(playerName, startingSpawn) : GameStateData {
     playerName = playerName || 'Player';
     return {
-        lastDroppedItemUid: 0,
+        totalElapsedTime: 0,
+        lastUid: 0,
         bells: 0,
         playerName,
         levels: [{
@@ -91,18 +106,26 @@ export function defaultGameData(playerName, startingSpawn) : GameStateData {
 
 export type ItemTypeData = {}
 
-export type GlobalItemData = {
-    name: string,
-    type: ItemTypes,
-}
 
+export type ItemActions = 'equip' | 'drop' | 'sell' | 'plant'
+
+
+export type ItemShopData = {
+    shopPrice?: number,
+    sellPrice?: number,
+}
+export type GlobalItemData = {
+    type: ItemTypes,
+    shop?: ItemShopData
+}
 export type InventoryItem = {
     index: number,
     name: string,
     quantity: number,
 }
 export type GameStateData = {
-    lastDroppedItemUid: number,
+    totalElapsedTime: number,
+    lastUid: number,
     bells: number,
     playerName: string,
     house: HouseStateData,
@@ -129,7 +152,6 @@ export type InventoryTextures = {
 }
 
 export type DialogueInterface = {
-    nameLabel : PIXI.Texture,
     npc: {
         nameLabel: PIXI.Texture,
         diaglogueBackground: PIXI.Texture,
@@ -143,20 +165,40 @@ export type DialogueInterface = {
 }
 
 export type ItemTextures = {
+    pedals1: PIXI.Texture,
+    pedals2: PIXI.Texture,
+    pedals3: PIXI.Texture,
+    pedals4: PIXI.Texture,
+    pedals5: PIXI.Texture,
     tree: PIXI.Texture,
-    honey: PIXI.Texture,
     seeds1: PIXI.Texture,
     seeds2: PIXI.Texture,
     seeds3: PIXI.Texture,
     seeds4: PIXI.Texture,
+    seeds5: PIXI.Texture,
+    flower1: PIXI.Texture,
+    flower2: PIXI.Texture,
+    flower3: PIXI.Texture,
+    flower4: PIXI.Texture,
+    flower5: PIXI.Texture,
     beehive: PIXI.Texture,
     hole: PIXI.Texture,
     bee: PIXI.Texture,
+    red_bed: PIXI.Texture,
+    blue_bed: PIXI.Texture,
+    green_bed: PIXI.Texture,
 }
 
 export type GameTextures = {
+    dialogue: DialogueInterface,
     inventory: InventoryTextures,
-    items: ItemTextures
+    honey: PIXI.Texture,
+    items: { icons: ItemTextures, placed: ItemTextures },
+    animations: {
+        bugs: {
+            bee: Array<PIXI.Texture>,
+        }
+    }
 }
 
 export type PlayerInput = {
@@ -178,8 +220,8 @@ export type PlayerInput = {
 }
 
 export enum BugTypes {
-    BEE,
-    BUTTERFLY,
+    BEE='bee',
+    BUTTERFLY='butterfly',
 }
 
 export type BugData = {
@@ -204,7 +246,7 @@ export enum NPC_TYPES {
 }
 
 export type PlayerDirections = 'north' | 'east' | 'south' | 'west';
-export type PlayerActions = 'walk' | 'idle' | 'swing' | 'fish' | 'water' | 'pull';
+export type PlayerActions = 'walk' | 'idle' | 'swing';
 export const GameValues = {
     PlayerSpeed:  100,
     PlayerDirections: {

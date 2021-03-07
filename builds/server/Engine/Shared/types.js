@@ -3,14 +3,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GameValues = exports.NPC_TYPES = exports.EntityTypes = exports.BugTypes = exports.defaultGameData = exports.ItemTypes = void 0;
 var ItemTypes;
 (function (ItemTypes) {
-    ItemTypes[ItemTypes["TREE"] = 0] = "TREE";
-    ItemTypes[ItemTypes["FURNITURE"] = 1] = "FURNITURE";
-    ItemTypes[ItemTypes["RESOURCE"] = 2] = "RESOURCE";
+    ItemTypes[ItemTypes["TOOL"] = 0] = "TOOL";
+    ItemTypes[ItemTypes["TREE"] = 1] = "TREE";
+    ItemTypes[ItemTypes["FLOWER"] = 2] = "FLOWER";
+    ItemTypes[ItemTypes["BUG"] = 3] = "BUG";
+    ItemTypes[ItemTypes["FURNITURE"] = 4] = "FURNITURE";
+    ItemTypes[ItemTypes["RESOURCE"] = 5] = "RESOURCE";
+    ItemTypes[ItemTypes["PLANTABLE"] = 6] = "PLANTABLE";
 })(ItemTypes = exports.ItemTypes || (exports.ItemTypes = {}));
 function defaultGameData(playerName, startingSpawn) {
     playerName = playerName || 'Player';
     return {
-        lastDroppedItemUid: 0,
+        totalElapsedTime: 0,
+        lastUid: 0,
         bells: 0,
         playerName,
         levels: [{
@@ -44,8 +49,8 @@ function defaultGameData(playerName, startingSpawn) {
 exports.defaultGameData = defaultGameData;
 var BugTypes;
 (function (BugTypes) {
-    BugTypes[BugTypes["BEE"] = 0] = "BEE";
-    BugTypes[BugTypes["BUTTERFLY"] = 1] = "BUTTERFLY";
+    BugTypes["BEE"] = "bee";
+    BugTypes["BUTTERFLY"] = "butterfly";
 })(BugTypes = exports.BugTypes || (exports.BugTypes = {}));
 var EntityTypes;
 (function (EntityTypes) {

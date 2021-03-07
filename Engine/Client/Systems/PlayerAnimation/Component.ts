@@ -16,6 +16,8 @@ export class PlayerAnimationComponent extends Component {
     readonly skeletonName : string;
     private entity : RemotePlayer | ClientPlayer | NPC;
 
+    private currentHeldItem : string;
+
     private playerMovementComponent : PlayerMovementComponent;
     constructor(skeletonName : string) {
         super(SYSTEMS.PLAYER_ANIMATION);
@@ -37,18 +39,43 @@ export class PlayerAnimationComponent extends Component {
         return this.skeleton
     }
 
+    private resolveAniName(baseAni: 'walk' | 'idle', itemFromAction?: 'shovel' | 'net' | 'axe') {
+        if(itemFromAction) {
+            return `${baseAni}_${itemFromAction}`
+        }
+        return baseAni;
+    }
+
+    public canPlayActionAnimation() : boolean {
+        if (!this.skeleton) return false;
+        return this.skeleton.baseTrack.currentAction.includes('walk') || this.skeleton.baseTrack.currentAction.includes('idle');
+    }
+
     public updateAnimation(delta: number, actionComponent?: PlayerActionComponent) {
+        const itemFromAction = actionComponent.actionAttachment;
         if(actionComponent && actionComponent.action) {
             this.skeleton.direction = actionComponent.actionDirection || this.skeleton.direction;
         } else {
             if(this.playerMovementComponent.movingDirection !== null) {
                 // player is moving, so set the direction and play the walk ani if not already.
                 this.skeleton.direction = this.playerMovementComponent.movingDirection;
-                if(this.skeleton.baseTrack.currentAction !== 'walk' || this.skeleton.baseTrack.stopped) {
-                    this.skeleton.play('walk', null, { loop: true });
+                const resolved = this.resolveAniName('walk', itemFromAction);
+                if(this.skeleton.baseTrack.currentAction !== resolved || this.skeleton.baseTrack.stopped) {
+                    this.skeleton.play(resolved, null, { loop: true });
                 }
-            } else if(!this.skeleton.baseTrack.stopped){
-                this.skeleton.stop();
+            } else {
+                if((this.skeleton.baseTrack.currentAction && this.skeleton.baseTrack.currentAction.includes('walk')) || !this.skeleton.baseTrack.stopped) {
+                    //    this.skeleton.play(resolved, null, { loop: true });
+                    this.skeleton.stop();
+                }
+                /* use this when we have idle implemented
+                                const resolved = this.resolveAniName('idle', itemFromAction);
+                if(this.skeleton.baseTrack.currentAction !== resolved || this.skeleton.baseTrack.stopped) {
+                //    this.skeleton.play(resolved, null, { loop: true });
+                    this.skeleton.stop();
+                }
+
+                 */
             }
         }
         this.skeleton.update(delta);

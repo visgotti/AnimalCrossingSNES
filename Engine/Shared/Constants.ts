@@ -19,18 +19,38 @@ export enum SYSTEMS {
     BUG_MOVEMENT,
     BUG_CATCH,
     BEE_KEEP,
+    DIG,
 }
-
+export type SeedData = {
+    flower: string,
+    timeToGrow: number,
+    beeFactor: number,
+    spawnRate: number
+}
 export enum MESSAGES {
+    GAME_STATE_INITIALIZED,
     INITIAL_MAP_LOADED,
     CLIENT_PLAYER_ENTITY_INITIALIZED,
     DROP_ITEM,
+    PICKUP_ITEM,
+    EQUIP_ITEM,
+    USE_ITEM,
     REMOVE_DROPPED_ITEM,
     INVENTORY_ERROR,
     NEW_FLOWER,
+    PLANTED_TREE,
+    REMOVED_TREE,
+    REMOVED_FLOWER,
+    FLOWER_FULLY_GROWN,
+    SPAWNED_BUG,
+    REMOVED_BUG,
+    START_TIMERS,
+    ADDED_HOLE,
+    REMOVED_HOLE,
 }
 
 export enum COLLIDER_TAGS {
+    hole='hole',
     flower='flower',
     bug='bug',
     blocking='blocking',
@@ -38,6 +58,7 @@ export enum COLLIDER_TAGS {
     tree='tree',
     tree_stump='tree_stump',
     client_player='client_player',
+    in_front_of_client_player='in_front_of_client_player',
     client_player_bug_detector='client_player_bug_detector',
     player='player',
     dropped_item='dropped_item',
