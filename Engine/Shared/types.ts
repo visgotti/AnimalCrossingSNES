@@ -1,5 +1,3 @@
-import {NPC} from "../Client/Assemblages/NPC";
-import {Entity} from "gotti";
 
 export type TreeState = {
     growth: number,
@@ -22,13 +20,13 @@ export type FlowerState = {
 export type FlowerTypes ='flower1' | 'flower2' | 'flower3' | 'flower4';
 
 export enum ItemTypes {
-    TOOL,
-    TREE,
-    FLOWER,
-    BUG,
-    FURNITURE,
-    RESOURCE,
-    PLANTABLE,
+    TOOL='tool',
+    TREE='tree',
+    FLOWER='flower',
+    BUG='bug',
+    FURNITURE='furniture',
+    RESOURCE='resource',
+    PLANTABLE='plantable',
 }
 
 export type DroppedItemData<T> = {
@@ -61,47 +59,15 @@ export type GameData = {
     items: {[itemName: string]: GlobalItemData },
 }
 
-export type TaskStateData = {
-    tomNook: number,
-}
-export type StartGameData = {
-    startingSpawn: { x: number, y: number }
+export type NPCStateData = {
+    task?: number,
+    level: string,
+    position: { x: number, y: number },
+    direction: string,
 }
 
-export function defaultGameData(playerName, startingSpawn) : GameStateData {
-    playerName = playerName || 'Player';
-    return {
-        totalElapsedTime: 0,
-        lastUid: 0,
-        bells: 0,
-        playerName,
-        levels: [{
-            name: 'home',
-            isHome: true,
-            droppableItems: [ItemTypes.FURNITURE, ItemTypes.RESOURCE],
-            state: {
-                items: [],
-                wall: 'default',
-                floor: 'default',
-            }
-        }, {
-            name: 'island',
-            droppableItems: [ItemTypes.FURNITURE, ItemTypes.RESOURCE, ItemTypes.TREE],
-            state: {
-                items: [],
-                holes: [],
-            }
-        }],
-        house: { wall: 'default', floor: 'default', items: [] },
-        task: { tomNook: 0 },
-        level: startingSpawn.level,
-        direction: 'south',
-        position: {
-            x: startingSpawn.x,
-            y: startingSpawn.y
-        },
-        inventory: []
-    }
+export type StartGameData = {
+    startingSpawn: { x: number, y: number }
 }
 
 export type ItemTypeData = {}
@@ -126,11 +92,14 @@ export type InventoryItem = {
 export type GameStateData = {
     totalElapsedTime: number,
     lastUid: number,
-    bells: number,
+    honey: number,
     playerName: string,
     house: HouseStateData,
     levels: Array<LevelData>,
-    task: TaskStateData,
+    npcData: {
+        nomTook: NPCStateData,
+        honeyBear: NPCStateData,
+    },
     position: {x:number,y:number},
     level: string,
     direction: string,
@@ -165,6 +134,8 @@ export type DialogueInterface = {
 }
 
 export type ItemTextures = {
+    net: PIXI.Texture,
+    shovel: PIXI.Texture,
     pedals1: PIXI.Texture,
     pedals2: PIXI.Texture,
     pedals3: PIXI.Texture,
@@ -240,6 +211,7 @@ export enum EntityTypes {
 }
 
 export enum NPC_TYPES {
+    NomTook,
     Neighbor,
     Townperson,
     Mayor,

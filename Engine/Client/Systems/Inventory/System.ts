@@ -11,11 +11,13 @@ import {
     PlayerInput
 } from "../../../Shared/types";
 import type = Mocha.utils.type;
+import assert = require("assert");
+import {GlobalGameData, ItemTypeInventoryActionLookup} from "../../../Shared/GameData";
 
 class InventorySlot extends PIXI.Container {
     public bg : PIXI.Sprite = new PIXI.Sprite(PIXI.Texture.EMPTY);
     public itemSprite : PIXI.Sprite = new PIXI.Sprite(PIXI.Texture.EMPTY);
-    public quantityText : PIXI.extras.BitmapText = new PIXI.extras.BitmapText('', { font: 'ns-small'});
+    public quantityText : PIXI.extras.BitmapText = new PIXI.extras.BitmapText('', { font: 'stroke-small'});
     public itemName : string = null;
     private _quantity : number = 0;
     constructor() {
@@ -24,8 +26,28 @@ class InventorySlot extends PIXI.Container {
         this.addChild(this.itemSprite);
         this.addChild(this.quantityText)
     }
+
+    set texture(t: PIXI.Texture) {
+        this.itemSprite.texture = t;
+        if(t) {
+            if(t.width < this.bg.width) {
+                this.itemSprite.x = (this.bg.width / 2) - (t.width / 2)
+            } else {
+                const diff = t.width - this.bg.width;
+                this.itemSprite.x = diff/2;
+            }
+            if(t.height < this.bg.height) {
+                this.itemSprite.y = (this.bg.height / 2) - (t.height / 2)
+            } else {
+                const diff = t.height - this.bg.height;
+                this.itemSprite.y = diff/2;
+            }
+        }
+    }
+
     get quantity() : number { return this._quantity }
     set quantity(v: number) {
+        this._quantity = v || 0;
         if(v && v > 1) {
             this.quantityText.text = `${v}`
         } else {
@@ -37,6 +59,62 @@ type InventoryChangeEvent = { type: 'add' | 'remove' | 'update', name : string, 
 
 const INVENTORY_COLUMNS = 8;
 const INVENTORY_ROWS = 2;
+class ContextMenuOption extends PIXI.Container {
+    readonly bg : PIXI.Sprite = new PIXI.Sprite();
+    private bitmapText : PIXI.extras.BitmapText;
+    callback : Function;
+    constructor(option: string, callback: Function) {
+        super();
+        this.callback = callback;
+        this.addChild(this.bg);
+        this.bg.y -= 3;
+        this.bg.x -= 2;
+        this.bitmapText = new PIXI.extras.BitmapText(option, { font: 'stroke-small'});
+        this.addChild(this.bitmapText)
+    }
+}
+class ContextMenu extends PIXI.Container {
+    readonly bg : PIXI.Sprite = new PIXI.Sprite();
+    public options: Array<ContextMenuOption> = [];
+    readonly selectedOptionTexture : PIXI.Texture;
+    constructor(bgTexture: PIXI.Texture, selectedOptionTexture: PIXI.Texture) {
+        super();
+        this.selectedOptionTexture = selectedOptionTexture
+        this.bg.texture = bgTexture;
+        this.addChild(this.bg);
+    }
+    public clear() {
+        this.visible = false;
+        this.options.forEach(o => {
+            o.destroy();
+        });
+        this.options.length = 0;
+    }
+    public setSelectedOption(index: number) {
+        this.options.forEach((o, i) => {
+            if(i === index) {
+                o.bg.texture = this.selectedOptionTexture
+            } else {
+                o.bg.texture = PIXI.Texture.EMPTY;
+            }
+        });
+    }
+    public setOptions(options: Array<{ action: string, callback: Function }>) {
+        this.clear();
+        this.visible = true;
+        const space = (this.bg.height-30) / options.length;
+        this.options = options.map((o, i) => {
+            const opt = new ContextMenuOption(o.action, o.callback);
+            opt.y = (space * i) + 15;
+            opt.x = 5;
+            this.addChild(opt);
+            return opt;
+        });
+    }
+}
+
+
+type PossibleActions = 'drop' | 'plant' | 'equip'
 
 export class InventorySystem extends ClientSystem {
     private toolUi : PIXI.Container;
@@ -49,11 +127,9 @@ export class InventorySystem extends ClientSystem {
 
     private inventorySlots : Array<InventorySlot> = [];
     private currentSelectedItemOptionIndex : number;
-    private currentSelectedItemOptions : Array<string>;
-
     private curSelectedIndex : number = 0;
     private clientPlayer : ClientPlayer;
-    private itemMenuContainer : PIXI.Container = new PIXI.Container();
+    private itemContextMenu : ContextMenu;
     private timeSinceInventoryToggled : number = 1;
     private timeSinceInventoryAction : number = 1;
 
@@ -65,7 +141,6 @@ export class InventorySystem extends ClientSystem {
         super(SYSTEMS.INVENTORY);
         this.recenterInterface = this.recenterInterface.bind(this);
         this.inventoryContainer.visible = false;
-        this.itemMenuContainer.visible = false;
     }
 
     get isOpen() : boolean {
@@ -77,7 +152,7 @@ export class InventorySystem extends ClientSystem {
     }
 
     get isItemMenuOpen() : boolean {
-        return this.itemMenuContainer.visible;
+        return this.itemContextMenu.visible;
     }
 
     onClear(): void {
@@ -89,7 +164,7 @@ export class InventorySystem extends ClientSystem {
 
         let firstOpen = -1;
         for(let i = 0; i < this.inventorySlots.length; i++) {
-            if(!this.inventorySlots[i].itemName) {
+            if(!this.inventorySlots[i].itemName && firstOpen < 0) {
                 firstOpen = i;
             }
             if(this.inventorySlots[i].itemName === itemName) {
@@ -97,6 +172,7 @@ export class InventorySystem extends ClientSystem {
                 const e : InventoryChangeEvent = { type: 'update', name: itemName, quantity };
                 this.updateInventorySlot(i, itemName, nextquantity);
                 this.globals.clientPlayer.emit(PLAYER_EVENTS.INVENTORY_CHANGE, e);
+                this.assertInventoryStateSync();
                 return { success: true };
             }
         }
@@ -104,8 +180,40 @@ export class InventorySystem extends ClientSystem {
             this.updateInventorySlot(firstOpen, itemName, quantity);
             const e : InventoryChangeEvent = { type: 'add', name: itemName, quantity, index: firstOpen };
             this.globals.clientPlayer.emit(PLAYER_EVENTS.INVENTORY_CHANGE, e);
+            this.assertInventoryStateSync();
+            return { success: true };
         }
-        return { success: false, error: 'No room in inventory' }
+        return { success: false, error: 'No room in inventory.' }
+    }
+    private assertInventoryStateSync(gameStateData?: GameStateData) {
+        gameStateData = gameStateData || this.globals.clientPlayer.gameState
+        let checked = [];
+        for(let i = 0; i < gameStateData.inventory.length; i++) {
+            const { index, name, quantity } = gameStateData.inventory[i];
+            const { itemName: slotName, quantity: slotQuantity } = this.inventorySlots[index];
+            if(slotName !== name) {
+                console.error('Expected the slot name at index', index, 'to be equal to game state:', name, 'but it was:', slotName)
+                assert.strictEqual(slotName, name);
+            }
+            if(slotQuantity !== quantity) {
+                console.error('Expected the slot quantity at index', index, 'to be equal to game state:', quantity, 'but it was:', slotQuantity)
+                assert.strictEqual(slotQuantity, quantity);
+            }
+            checked.push(index);
+        }
+        for(let i = 0; i < this.inventorySlots.length; i++) {
+            if(!checked.includes(i)) {
+                const { itemName, quantity } = this.inventorySlots[i];
+                if(itemName !== null) {
+                    console.error('Expected the slot name at index', i, 'to be equal to null because it was not in the game state but it was:', itemName)
+                    assert.strictEqual(itemName, null);
+                }
+                if(itemName !== null) {
+                    console.error('Expected the slot quantity at index', i, 'to be equal to 0 because it was not in the game state but it was:', quantity)
+                    assert.strictEqual(quantity, 0);
+                }
+            }
+        }
     }
 
     public removeItem(itemName: string, quantity: number) : { success: boolean, error?: string } {
@@ -118,22 +226,25 @@ export class InventorySystem extends ClientSystem {
                     this.removeInventorySlot(i);
                     const e : InventoryChangeEvent = { type: 'remove', name: itemName, index: i, quantity };
                     this.globals.clientPlayer.emit(PLAYER_EVENTS.INVENTORY_CHANGE, e);
+                    this.assertInventoryStateSync();
                     return { success: true }
                 } else {
                     this.updateInventorySlot(i, itemName, nextQuantity);
                     const e : InventoryChangeEvent = { type: 'update', name: itemName, index: i, quantity: -quantity };
                     this.globals.clientPlayer.emit(PLAYER_EVENTS.INVENTORY_CHANGE, e);
+                    this.assertInventoryStateSync();
                     return { success: true }
                 }
             }
         }
-        return { success: false, error: 'No room in inventory' }
+        return { success: false, error: `Did not find the item: ${itemName} in player's inventory` }
     }
 
     private initInventoryFromGameState(gameState: GameStateData) {
         gameState.inventory.forEach(({ index, name, quantity }) => {
             this.updateInventorySlot(index, name, quantity);
         });
+        this.assertInventoryStateSync(this.globals.gameStateData);
     }
 
     onLocalMessage(message): void {
@@ -151,31 +262,35 @@ export class InventorySystem extends ClientSystem {
         this.inventoryPointer = new PIXI.Sprite();
         this.backgroundSprite = new PIXI.Sprite(this.inventoryTextures.background);
         this.inventoryContainer.addChild(this.backgroundSprite);
-        const slotW = this.inventoryTextures.background.width / INVENTORY_COLUMNS;
+        const padX = 10;
+        const slotW = (this.inventoryTextures.background.width - (padX*2)) / INVENTORY_COLUMNS;
         const slotH = this.inventoryTextures.background.height / INVENTORY_ROWS;
         for(let row = 0; row < INVENTORY_ROWS; row++) {
             for(let col = 0; col < INVENTORY_COLUMNS; col++) {
                 const slot = new InventorySlot();
-                slot.x = col * slotW;
-                slot.y = row * slotH;
+                slot.x = (col * slotW) + padX + 2; // extra 2 padding since the left side of the interface texture is kind of wonky.
+                slot.y = row * slotH + 5;
+                if(col === 0 || col === 7) {
+                    slot.y += 6;
+                }
+                if(col === 1 || col === 6) {
+                    slot.y += 3
+                }
+                if(row === 0) {
+                    slot.y += 3;
+                } else {
+                    slot.y -= 3;
+                }
+
                 slot.bg.texture = this.inventoryTextures.item.emptyBackground;
                 this.inventoryContainer.addChild(slot);
                 this.inventorySlots.push(slot);
             }
         }
-        const itemOptions = [{ name: 'Drop', handler: (itemName: string, quantity: number) => {
-            this.removeItem(itemName, quantity);
-           // this.$api.dropItemFromPlayer(itemName, quantity)
-        }}];
-        itemOptions.forEach(({ name, handler }, i) => {
-            const c = new PIXI.Container();
-            c.addChild(new PIXI.Sprite());
-            c.addChild(new PIXI.extras.BitmapText(name, { font: 'ns-small'}));
-            c['handler'] = handler;
-            this.itemMenuContainer.addChild(c);
-            c.y = i * this.inventoryTextures.contextMenu.selectedBackground.height;
-        });
-        this.inventoryContainer.addChild(this.itemMenuContainer);
+        const options = [];
+
+        this.itemContextMenu = new ContextMenu(this.inventoryTextures.contextMenu.background, this.inventoryTextures.contextMenu.selectedBackground);
+        this.inventoryContainer.addChild(this.itemContextMenu);
         this.inventoryContainer.addChild(this.inventoryPointer);
         this.addApi(this.removeItem);
         this.addApi(this.addItem);
@@ -194,7 +309,7 @@ export class InventorySystem extends ClientSystem {
     public removeInventorySlot(slotIndex: number) {
         if(this.inventorySlots[slotIndex].itemName) {
             this.inventorySlots[slotIndex].bg.texture = PIXI.Texture.EMPTY;
-            this.inventorySlots[slotIndex].itemSprite.texture = PIXI.Texture.EMPTY;
+            this.inventorySlots[slotIndex].texture = PIXI.Texture.EMPTY;
             this.inventorySlots[slotIndex].quantity = 0;
             this.inventorySlots[slotIndex].itemName = null;
         }
@@ -205,7 +320,7 @@ export class InventorySystem extends ClientSystem {
         const slot = this.inventorySlots[slotIndex];
         slot.itemName = itemName;
         const texture = this.itemIconTextures[itemName];
-        slot.itemSprite.texture = texture;
+        slot.texture = texture;
         slot.quantity = totalQuantity;
     }
     public setSelectedItemSlot(slotIndex : number) {
@@ -216,8 +331,8 @@ export class InventorySystem extends ClientSystem {
         this.curSelectedIndex = slotIndex;
         this.inventorySlots[slotIndex].bg.texture = this.inventoryTextures.item.selectedBackground;
         this.inventoryPointer.texture =  this.inventoryTextures.item.pointer;
-        this.inventoryPointer.x = this.inventorySlots[slotIndex].x
-        const slotH = this.inventoryTextures.background.height / INVENTORY_ROWS;
+        this.inventoryPointer.x = this.inventorySlots[slotIndex].x + 5;
+        const slotH = this.inventoryTextures.item.emptyBackground.height;
         this.inventoryPointer.y = this.inventorySlots[slotIndex].y + (slotH-2);
     }
     private toggleInventory(show: boolean) {
@@ -226,7 +341,7 @@ export class InventorySystem extends ClientSystem {
         this.inventoryPointer.visible = show;
         this.timeSinceInventoryToggled = 0;
         if(!show) {
-            this.itemMenuContainer.visible = false;
+            this.itemContextMenu.visible = false;
         }
     }
     onEntityAddedComponent(entity: any, component : InventoryComponent) {
@@ -286,11 +401,15 @@ export class InventorySystem extends ClientSystem {
         return -1;
     }
 
+    get currentSelectedItemSlot() : InventorySlot {
+        return this.inventorySlots[this.curSelectedIndex]
+    }
+
     get currentSelectedItemData() : { globalData: GlobalItemData, inventoryData: InventoryItem } {
         const { itemName, quantity } = this.inventorySlots[this.curSelectedIndex];
         if(itemName) {
             return {
-                globalData: this.globals.itemData[itemName],
+                globalData: GlobalGameData.items[itemName],
                 inventoryData: { index: this.curSelectedIndex, name: itemName, quantity },
             }
         }
@@ -299,29 +418,57 @@ export class InventorySystem extends ClientSystem {
 
     private showItemOptions() : boolean {
         if(!this.currentSelectedItemData) return false;
-        this.itemMenuContainer.visible = true;
+        this.itemContextMenu.visible = true;
+        this.itemContextMenu.x = this.currentSelectedItemSlot.x + this.currentSelectedItemSlot.bg.width - 3;
+        this.itemContextMenu.y = this.currentSelectedItemSlot.y + (this.currentSelectedItemSlot.bg.height) - 10
+        const type = this.currentSelectedItemData.globalData.type;
+        const opts = ItemTypeInventoryActionLookup[type].map((o: PossibleActions) => {
+            return {
+                action: o,
+                callback: () => {
+                    if(o === 'equip') {
+                        this.dispatchAllLocal({
+                            type: MESSAGES.EQUIP_ITEM,
+                            data: this.currentSelectedItemData.inventoryData.name
+                        })
+                    } else if (o === 'plant') {
+                        if(!(this.$api.getFocusedHole())) {
+                            console.error('no hole.')
+                        } else {
+                            console.error('DO PLANT')
+                        }
+                    } else if (o === 'drop') {
+                        if(!(this.$api.dropItemFromPlayer(this.currentSelectedItemData.inventoryData.name))) {
+                            console.error('CANT DROP.')
+                        } else {
+                            console.error('DROPT')
+                        }
+                    }
+                }
+            }
+        });
+        this.inventoryPointer.texture = this.inventoryTextures.contextMenu.pointer
+        this.itemContextMenu.setOptions(opts);
         this.setCurrentSelectedItemOption(0);
         return true;
     }
+
     private hideItemOptions()  {
-        this.itemMenuContainer.visible = false;
+        this.itemContextMenu.clear();
         this.setSelectedItemSlot(this.curSelectedIndex)
     }
     private setCurrentSelectedItemOption(index: number) {
         this.currentSelectedItemOptionIndex = index;
-        this.itemMenuContainer.children.forEach((c, i) => {
-            if(i === index) {
-                this.inventoryPointer.texture =  this.inventoryTextures.contextMenu.pointer;
-                this.inventoryPointer.x = this.itemMenuContainer.x - this.inventoryPointer.width - 2;
-                // @ts-ignore
-                c.children[0].texture = i === index ? this.inventoryTextures.contextMenu.selectedBackground : null;
-            }
-        });
+        this.itemContextMenu.setSelectedOption(index);
+        if(this.itemContextMenu.options[index]) {
+            this.inventoryPointer.x = this.itemContextMenu.x - (this.inventoryPointer.width/2 + 7);
+            this.inventoryPointer.y = this.itemContextMenu.y + this.itemContextMenu.options[index].y
+        }
     }
     get currentSelectedItemOptionText() : string {
-        if(this.itemMenuContainer.visible) {
+        if(this.itemContextMenu.visible) {
             // @ts-ignore
-            return this.itemMenuContainer.children[this.currentSelectedItemOptionIndex].children[1].text;
+            return this.itemContextMenu.children[this.currentSelectedItemOptionIndex].children[1].text;
         }
         return null;
     }
@@ -344,14 +491,14 @@ export class InventorySystem extends ClientSystem {
 
     private doMoveSelectedItemOption(up?: boolean, down?: boolean) {
         if(down) {
-            if(this.currentSelectedItemOptionIndex === this.currentSelectedItemOptions.length-1) {
+            if(this.currentSelectedItemOptionIndex === this.itemContextMenu.options.length-1) {
                 this.setCurrentSelectedItemOption(0);
             } else {
                 this.setCurrentSelectedItemOption(this.currentSelectedItemOptionIndex+1)
             }
         } else if(up) {
             if(this.currentSelectedItemOptionIndex === 0) {
-                this.setCurrentSelectedItemOption(this.currentSelectedItemOptions.length-1);
+                this.setCurrentSelectedItemOption(this.itemContextMenu.options.length-1);
             } else {
                 this.setCurrentSelectedItemOption(this.currentSelectedItemOptionIndex+1)
             }
@@ -365,10 +512,15 @@ export class InventorySystem extends ClientSystem {
             document.removeEventListener('resize', this.recenterInterface);
         }
     }
-    public doCurrentSelectedItemOption() {
+
+    get curSelectedOptionCallback() : Function {
+        if(this.itemContextMenu.visible && this.itemContextMenu.options[this.currentSelectedItemOptionIndex]) {
+            return this.itemContextMenu.options[this.currentSelectedItemOptionIndex].callback;
+        }
+        return () => {};
     }
     update(delta: any): void {
-        if(!this.clientPlayer) return;
+        if(!this.$api.gameStateInitialized() || !this.clientPlayer) return;
         const {
             inventory, grab, moveDown, moveUp, cancel, escape
         } = this.clientPlayer.playerInput;
@@ -379,7 +531,7 @@ export class InventorySystem extends ClientSystem {
         this.timeSinceInventoryAction += delta;
         if(this.isItemMenuOpen) {
             if(grab && this.canDoInventoryInputAction('grab')) {
-                this.doCurrentSelectedItemOption();
+                this.curSelectedOptionCallback();
                 this.timeSinceInventoryAction = 0;
             } else if((moveDown && this.canDoInventoryInputAction('moveDown')) || (moveUp && this.canDoInventoryInputAction('moveUp'))) {
                 this.doMoveSelectedItemOption(
@@ -388,7 +540,7 @@ export class InventorySystem extends ClientSystem {
                 );
                 this.timeSinceInventoryAction = 0;
             } else if (cancel && this.canDoInventoryInputAction('cancel')) {
-                this.itemMenuContainer.visible = false;
+                this.hideItemOptions();
                 this.timeSinceInventoryAction = 0;
             }
         } else if (this.isOpen) {

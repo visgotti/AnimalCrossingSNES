@@ -3,6 +3,7 @@ import {MESSAGES, PLAYER_EVENTS, SYSTEMS} from "../../../Shared/Constants";
 import {DroppedItemData, FurnitureState, GameStateData, LevelData, TreeState} from "../../../Shared/types";
 import {GameStateComponent} from "./Component";
 import {ClientPlayer} from "../../Assemblages/ClientPlayer";
+import {TOM_NOOK_SHOP_POSITION} from "../../../Shared/GameData";
 
 type InventoryChangeEvent = { type: 'add' | 'remove' | 'update', name : string, quantity: number, index?: number };
 
@@ -18,12 +19,21 @@ export class GameStateSystem extends ClientSystem {
     onClear(): void {
     }
 
+    public gameStateInitialized() : boolean {
+        return !!this.gameState
+    }
+
     onInit() {
+        this.addApi(this.gameStateInitialized);
         this.addApi(this.getUid);
+        this.addApi(this.needsTutorial);
     }
 
     onLocalMessage(message): void {
         switch(message.type) {
+            case MESSAGES.FINISH_NPC_TASK:
+                this.handleFinishNPCTask(message.data);
+                break;
             case MESSAGES.ADDED_HOLE:
                 this.handleAddedHole(message.data.x, message.data.y, message.data.uid);
                 break;
@@ -38,7 +48,16 @@ export class GameStateSystem extends ClientSystem {
                 break;
         }
     }
-
+    private handleFinishNPCTask(npcName: 'nomTook' | 'honeyBear') {
+        this.gameState.data.npcData[npcName].task++;
+        if(npcName === 'nomTook' && this.gameState.data.npcData[npcName].task === 1) {
+            this.gameState.data.npcData.nomTook.position = { ...TOM_NOOK_SHOP_POSITION };
+            this.dispatchAllLocal({
+                type: MESSAGES.FINISHED_TUTORIAL
+            });
+        }
+        this.gameState.save();
+    }
     private validateAndGetLevelStateObject(level: string) : LevelData {
         const found = this.gameState.data.levels.find(l => l.name === level);
         if(!found) throw new Error(`Didnt find level data for ${level}`);
@@ -90,20 +109,32 @@ export class GameStateSystem extends ClientSystem {
     onStart() {
     }
 
+    public needsTutorial() : boolean {
+        if(this.gameState) {
+            if(!this.gameState) throw new Error(`Check after game state initialized.`)
+            return this.gameState.data.npcData.nomTook.task === 0;
+        } else if (this.globals.gameStateData) {
+            return this.globals.gameStateData.npcData.nomTook.task === 0;
+        } else {
+            throw new Error(`No state`)
+        }
+    }
+
     onEntityAddedComponent(entity: ClientPlayer, component: GameStateComponent) {
         this.gameState = component;
         this.lastUid = component.data.lastUid;
-        this.dispatchAllLocal({
-            type: MESSAGES.GAME_STATE_INITIALIZED,
-            data: component.data
-        });
         // do the event listeners in a set timeout to make sure the entity has the inventory component when listening.
         setTimeout(() => {
+            this.dispatchAllLocal({
+                type: MESSAGES.GAME_STATE_INITIALIZED,
+                data: component.data
+            });
             entity.on(PLAYER_EVENTS.INVENTORY_CHANGE, this.handleInventoryChange)
-        });
+        }, 0);
     }
 
     public getUid() {
+        if(!this.gameStateInitialized()) throw new Error(`getUid should not be called before the game state is initialized.`)
         this.gameState.data.lastUid++;
         this.gameState.save();
         return this.gameState.data.lastUid

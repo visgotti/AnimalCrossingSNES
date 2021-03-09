@@ -54,11 +54,13 @@ export class ItemDropSystem extends ClientSystem {
     onInit() {
         this.globals.tileWorld.use(this.droppedItemCollisionPlugin)
         this.addApi(this.dropItem);
+        this.addApi(this.dropItemFromPlayer);
     }
 
-    public dropItemFromPlayer(itemName: string) {
+    public dropItemFromPlayer(itemName: string) : boolean {
         const p = this.globals.clientPlayer.getPosition();
         const direction = this.globals.clientPlayer.getComponent(SYSTEMS.PLAYER_ANIMATION).skeleton.direction;
+        return false;
     }
 
     public dropItem(itemName: string, worldX: number, worldY: number, destroyTimeout?: number) {

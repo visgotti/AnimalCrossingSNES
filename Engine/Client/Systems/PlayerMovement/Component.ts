@@ -8,6 +8,7 @@ export class PlayerMovementComponent extends Component {
     private velocityX: number = 0;
     private velocityY: number = 0;
     private previous: string;
+    public disabled : boolean = false;
     constructor(speed : number) {
         super(SYSTEMS.PLAYER_MOVEMENT);
         this.speed = speed;

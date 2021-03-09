@@ -2,7 +2,7 @@ import {ClientSystem} from "gotti";
 import {MESSAGES, SYSTEMS} from "../../../Shared/Constants";
 import {PlayerActionComponent} from "./Component";
 
-type ValidTools = 'net' | 'shovel'
+type ValidTools = 'net' | 'shovel' | 'axe'
 
 export class PlayerActionSystem extends ClientSystem {
     private clientPlayerComponent : PlayerActionComponent;
@@ -16,9 +16,6 @@ export class PlayerActionSystem extends ClientSystem {
 
     private makeToolUi() {
     }
-
-
-
     private repositionToolUI() {
     }
 
@@ -51,7 +48,7 @@ export class PlayerActionSystem extends ClientSystem {
 
     onLocalMessage(message): void {
         switch(message.type) {
-            case MESSAGES.USE_ITEM:
+            case MESSAGES.EQUIP_ITEM:
                 this.handlePlayerEquipItem(message.data);
                 break;
         }

@@ -16,23 +16,7 @@ export class DialogueComponent extends Component {
     }
 
     public hideDialogue() {
-        if(this.dialogueTimeout) {
-            clearTimeout(this.dialogueTimeout);
-            this.dialogueTimeout = null;
-        }
-        this.currentBitmapText.text = '';
     }
     public showDialogue(dialogue: string, time?: number) {
-        if(this.dialogueTimeout) {
-            clearTimeout(this.dialogueTimeout);
-            this.dialogueTimeout = null;
-        }
-        this.hideDialogue();
-        this.currentBitmapText.text = dialogue;
-        if(time) {
-            this.dialogueTimeout = setTimeout(() => {
-                this.hideDialogue();
-            }, time);
-        }
     }
 }

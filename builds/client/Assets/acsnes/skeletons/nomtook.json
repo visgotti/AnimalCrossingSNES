@@ -1,0 +1,42 @@
+{
+    "actions": {
+        "5": "walk"
+    },
+    "id": "nomtook",
+    "name": "nomtook",
+    "boneNames": {},
+    "actionIds": [
+        5
+    ],
+    "directions": [
+        "south"
+    ],
+    "attachmentSlotIds": [],
+    "atlasIds": [
+        2
+    ],
+    "animationIds": [
+        "18"
+    ],
+    "setupData": {
+        "frames": {
+            "south": {
+                "boneOrder": [
+                    2
+                ],
+                "bones": [
+                    {
+                        "id": "2",
+                        "slotId": 42
+                    }
+                ]
+            }
+        },
+        "bones": [
+            {
+                "name": "base",
+                "id": 2
+            }
+        ]
+    }
+}

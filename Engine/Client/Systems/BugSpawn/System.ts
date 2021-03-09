@@ -1,8 +1,8 @@
 import {ClientSystem} from "gotti";
-import {MESSAGES, SYSTEMS} from "../../../Shared/Constants";
+import {COLLIDER_TAGS, MESSAGES, SYSTEMS} from "../../../Shared/Constants";
 import {getRandomNumber} from "../../../Shared/Utils";
 import {BugTypes} from "../../../Shared/types";
-import {Bug} from "../../Assemblages/Bug";
+import {Bug, BugSpawnData} from "../../Assemblages/Bug";
 
 export class BugSpawnSystem extends ClientSystem{
     private bugTypeLookup : {[bugName: string]: any} = {}
@@ -29,6 +29,11 @@ export class BugSpawnSystem extends ClientSystem{
     }
 
     onEntityRemovedComponent(entity: any, component) {
+        if(entity.gameObject) {
+            delete entity.gameObject.entity;
+            entity.gameObject.removeFromMap();
+            delete entity.gameObject;
+        }
         this.dispatchAllLocal({
             type: MESSAGES.REMOVED_BUG,
             data: entity,
@@ -36,6 +41,7 @@ export class BugSpawnSystem extends ClientSystem{
     }
 
     private getNextBugToSpawn() : BugTypes {
+        return BugTypes.BEE;
         const intervals = [];
         let sum = 0;
         Object.keys(this.bugProbabilityLookup).forEach(k => {
@@ -62,14 +68,37 @@ export class BugSpawnSystem extends ClientSystem{
             return nextBug;
         }
     }
-
+    private initBug(bug: Bug, data: BugSpawnData) {
+        this.initializeEntity(bug, data);
+    }
     update(delta: any): void {
+        if(!this.$api.gameStateInitialized()) return;
         this.timeSinceLastSpawn += delta;
         if(this.timeSinceLastSpawn > 1) {
             const spawn = this.getNextBugToSpawn();
             if(spawn) {
-                const data = this.globals.itemData[spawn];
-                const bug = new Bug(this.$api.getUid(), spawn);
+                const sprite = new PIXI.Sprite();
+                const go = this.globals.tileWorld.addGameObject({
+                    sprite,
+                    layer: 1,
+                    colliders: [{
+                        layer: 1,
+                        type: COLLIDER_TAGS.bug,
+                        shapeData: { x: 0, y: 0, r: 5 },
+                        dynamic: true,
+                    }]
+                })
+                const bug = new Bug(this.$api.getUid(), spawn, go);
+                const bugData : BugSpawnData = {
+                    type: spawn,
+                    speed: 5,
+                    position: { x: 10, y: 10 },
+                    angle: 1,
+                    size: 1,
+                    frames: this.globals.gameTextures.animations.bugs[spawn],
+                    sprite,
+                }
+                this.initBug(bug, bugData);
                 this.dispatchLocal({
                     to: SYSTEMS.GAME_STATE,
                     data: bug,

@@ -37,7 +37,7 @@ export function rectsAreColliding(rect1, rect2) {
         rect1.height + rect1.y > rect2.y)
 };
 
-export function getMovementDataFromDeltas(deltaX, deltaY) {
+export function getMovementDataFromDeltas(deltaX, deltaY) : number {
 
     let movingDirectionIndex = -1;
 

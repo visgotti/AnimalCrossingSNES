@@ -52,6 +52,7 @@ export class PlayerAnimationComponent extends Component {
     }
 
     public updateAnimation(delta: number, actionComponent?: PlayerActionComponent) {
+        if(this.playerMovementComponent.disabled) return;
         const itemFromAction = actionComponent.actionAttachment;
         if(actionComponent && actionComponent.action) {
             this.skeleton.direction = actionComponent.actionDirection || this.skeleton.direction;
@@ -66,7 +67,11 @@ export class PlayerAnimationComponent extends Component {
             } else {
                 if((this.skeleton.baseTrack.currentAction && this.skeleton.baseTrack.currentAction.includes('walk')) || !this.skeleton.baseTrack.stopped) {
                     //    this.skeleton.play(resolved, null, { loop: true });
-                    this.skeleton.stop();
+                    if(this.skeleton.baseTrack.currentAction && this.skeleton.baseTrack.currentAction !== 'walk') {
+                        this.skeleton.baseTrack.pause();
+                    } else {
+                        this.skeleton.stop();
+                    }
                 }
                 /* use this when we have idle implemented
                                 const resolved = this.resolveAniName('idle', itemFromAction);

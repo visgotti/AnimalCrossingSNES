@@ -8,6 +8,7 @@ import {PlayerActionComponent} from "../Systems/PlayerAction/Component";
 import {InventoryComponent} from "../Systems/Inventory/Component";
 import {GameStateComponent} from "../Systems/GameState/Component";
 import { BugCatchComponent } from "../Systems/BugCatch/Component";
+import {SYSTEMS} from "../../Shared/Constants";
 
 export class ClientPlayer extends Entity {
     public action : PlayerActions = 'idle';
@@ -26,14 +27,23 @@ export class ClientPlayer extends Entity {
         grab: false,
         sprint: false,
         cancel: false,
+        escape: false,
     };
+
+    private gameStateComponent : GameStateComponent;
 
     constructor() {
         super(1, EntityTypes.ClientPlayer);
     }
 
-    initialize(data?: GameStateData): void {
-        this.addComponent(new GameStateComponent(data))
+    get gameState() : GameStateData {
+        if(!this.gameStateComponent) throw new Error(`Dont try to get the gameState from the client before its initialized.`)
+        return this.gameStateComponent.data
+    }
+
+    initialize(data: GameStateData): void {
+        this.gameStateComponent = new GameStateComponent(data)
+        this.addComponent(this.gameStateComponent)
         this.addComponent(new InputComponent(this.playerInput));
         this.addComponent(new Position(data.position.x, data.position.y));
         this.addComponent(new PlayerMovementComponent(GameValues.PlayerSpeed));

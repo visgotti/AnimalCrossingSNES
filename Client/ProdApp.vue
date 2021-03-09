@@ -13,7 +13,7 @@
       <div class="inner-container">
         <div class="half-vert top">
           <div class="game-title">
-            Animal Crossing SNES
+            <img id="logo" :src="require('./assets/sneslogo.png').default"/>
           </div>
           <div class="credits">
             <a href="http://www.fordesoft.com/" target="_blank">Graphics - Josh</a>
@@ -242,15 +242,8 @@ export default {
   -webkit-transition: opacity 1.1s ease-in-out;
 }
   #logo {
-    width: 260px;
-    -webkit-filter: drop-shadow(3px 3px 4px rgba(255,255,255,.5))
-    drop-shadow(-3px 3px 4px rgba(255,255,255,.5))
-    drop-shadow(3px -3px 4px rgba(255,255,255,.5))
-    drop-shadow(-3px -3px 4px rgba(255,255,255,.5));
-    filter: drop-shadow(3px 3px 4px rgba(255,255,255,.5))
-    drop-shadow(-3px 3px 4px rgba(255,255,255,.5))
-    drop-shadow(3px -3px 4px rgba(255,255,255,.5))
-    drop-shadow(-3px -3px 4px rgba(255,255,255,.5));
+    zoom: 2;
+    image-rendering: pixelated;
   }
   #progress-info {
     position: absolute;

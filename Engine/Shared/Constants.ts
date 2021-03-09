@@ -16,10 +16,11 @@ export enum SYSTEMS {
     GAME_STATE,
     FLOWER,
     BUG_SPAWN,
-    BUG_MOVEMENT,
+    BUG_MOVEMENT_AND_ANIMATION,
     BUG_CATCH,
     BEE_KEEP,
     DIG,
+    NPC,
 }
 export type SeedData = {
     flower: string,
@@ -28,6 +29,10 @@ export type SeedData = {
     spawnRate: number
 }
 export enum MESSAGES {
+    ADDED_INVENTORY_ITEM,
+    REMOVED_INVENTORY_ITEM,
+    FINISHED_TUTORIAL,
+    FINISH_NPC_TASK,
     GAME_STATE_INITIALIZED,
     INITIAL_MAP_LOADED,
     CLIENT_PLAYER_ENTITY_INITIALIZED,

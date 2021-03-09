@@ -35,6 +35,7 @@ export class PlayerMovementSystem extends ClientSystem {
     onLocalMessage(message): void {}
     onServerMessage(message): any {
     }
+
     onEntityAddedComponent(entity: any, component) {
         if(!entity.hasComponent(SYSTEMS.POSITION)) throw new Error(`Entities added with a player movement component should have a position component added first always.`)
         if(entity.type === EntityTypes.ClientPlayer) {
@@ -53,9 +54,7 @@ export class PlayerMovementSystem extends ClientSystem {
             });
         } else if (entity.type === EntityTypes.RemotePlayer) {
             this.remotePlayers.push(entity);
-        } else if (entity.type === EntityTypes.NPC) {
-            this.npcPlayers.push(entity);
-        }else {
+        } else {
             console.error(entity);
             throw new Error(`Unexpected entity: ${entity.id} had a player movement entity`)
         }
@@ -72,8 +71,6 @@ export class PlayerMovementSystem extends ClientSystem {
             this.clientPlayer = null;
         } else if (entity.type === EntityTypes.RemotePlayer) {
             this.remotePlayers = this.remotePlayers.filter(r => r !== entity);
-        } else if (entity.type === EntityTypes.NPC) {
-            this.npcPlayers =this.npcPlayers.filter(r => r !== entity);
         } else {
             console.error(entity);
             throw new Error(`Unexpected entity: ${entity.id} had a player movement entity`)
@@ -96,6 +93,14 @@ export class PlayerMovementSystem extends ClientSystem {
     update(delta: any): void {
         if(this.clientPlayer && !this.$api.isInventoryOpen() && !this.$api.isInDialogue()) {
             const pmc : PlayerMovementComponent = this.getSystemComponent(this.clientPlayer);
+            if(pmc.disabled) {
+                const aniComponent = this.clientPlayer.getComponent(SYSTEMS.PLAYER_ANIMATION);
+                const dir = aniComponent.skeleton?.direction || this.clientPlayer.getComponent(SYSTEMS.GAME_STATE).data.direction;
+                const offsets = AheadOfPlayerOffsets[dir];
+                const finalPosition = this.clientPlayer.getPosition();
+                this.aheadOfPlayerGameObject.setPosition(finalPosition.x+offsets.x, finalPosition.y+offsets.y);
+                return;
+            };
             const actionComponent : PlayerActionComponent = this.clientPlayer.getComponent(SYSTEMS.PLAYER_ACTION);
             if(actionComponent?.action) {
                 pmc.setVelocities(0, 0);
@@ -120,11 +125,6 @@ export class PlayerMovementSystem extends ClientSystem {
                 offsets = AheadOfPlayerOffsets[dir];
             }
             this.aheadOfPlayerGameObject.setPosition(finalPosition.x+offsets.x, finalPosition.y+offsets.y);
-            console.log('the ahead of player game object position became', this.aheadOfPlayerGameObject.worldX, this.aheadOfPlayerGameObject.worldY)
-        }
-        for(let i = 0 ; i < this.npcPlayers.length; i++) {
-            const pmc : NPCMovementComponent = this.npcPlayers[i].getComponent(SYSTEMS.NPC_MOVEMENT);
-            pmc.updateMovement(delta);
         }
     }
 

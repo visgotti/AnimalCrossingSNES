@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GlobalGameData = exports.PlatableGameData = void 0;
+exports.defaultGameData = exports.GlobalGameData = exports.WALK_TO_HOUSE_PATHS = exports.NOM_TOOK_WALK_TO_YOU = exports.TOM_NOOK_SHOP_POSITION = exports.START_POSITIONS = exports.PlatableGameData = exports.ItemTypeInventoryActionLookup = void 0;
 const types_1 = require("./types");
 const BedFurnitureData = {
     type: types_1.ItemTypes.FURNITURE,
@@ -16,8 +16,8 @@ const SeedInventoryData = {
     type: types_1.ItemTypes.PLANTABLE,
 };
 const DropArray = ['drop'];
-const ItemTypeInventoryActionLookup = {
-    [types_1.ItemTypes.TOOL]: ['equip', 'drop'],
+exports.ItemTypeInventoryActionLookup = {
+    [types_1.ItemTypes.TOOL]: ['equip'],
     [types_1.ItemTypes.RESOURCE]: DropArray,
     [types_1.ItemTypes.BUG]: DropArray,
     [types_1.ItemTypes.FURNITURE]: DropArray,
@@ -55,6 +55,24 @@ exports.PlatableGameData = {
         beeFactor: 15,
         spawnRate: 55000,
     }
+};
+exports.START_POSITIONS = {
+    nomTook: { x: 1030, y: 550, direction: 'south' },
+    player: { x: 1030, y: 750, direction: 'north' }
+};
+exports.TOM_NOOK_SHOP_POSITION = { x: 1000, y: 970 };
+exports.NOM_TOOK_WALK_TO_YOU = { x: 1030, y: 715, direction: 'south' };
+exports.WALK_TO_HOUSE_PATHS = {
+    player: [
+        { x: 1060, y: 750, direction: 'east' },
+        { x: 1030, y: 750, direction: 'west' },
+        { x: 1030, y: 950, direction: 'south' },
+        { x: 1060, y: 950, direction: 'east' },
+        { x: 1060, y: 1000, direction: 'south' },
+        { x: 1030, y: 1000, direction: 'west' },
+        { x: 1030, y: 1000, direction: 'north' } // look at nom.
+    ],
+    nomTook: [{ x: 1030, y: 970, direction: 'south' }],
 };
 const FlowerItemData = {
     type: types_1.ItemTypes.FLOWER,
@@ -119,3 +137,52 @@ exports.GlobalGameData = {
         'flower5': FlowerItemData,
     }
 };
+function defaultGameData(playerName) {
+    playerName = playerName || 'Player';
+    return {
+        totalElapsedTime: 0,
+        lastUid: 0,
+        honey: 0,
+        playerName,
+        levels: [{
+                name: 'home',
+                isHome: true,
+                droppableItems: [types_1.ItemTypes.FURNITURE, types_1.ItemTypes.RESOURCE],
+                state: {
+                    items: [],
+                    wall: 'default',
+                    floor: 'default',
+                }
+            }, {
+                name: 'island',
+                droppableItems: [types_1.ItemTypes.FURNITURE, types_1.ItemTypes.RESOURCE, types_1.ItemTypes.TREE],
+                state: {
+                    items: [],
+                    holes: [],
+                }
+            }],
+        house: { wall: 'default', floor: 'default', items: [] },
+        npcData: {
+            nomTook: {
+                level: 'island',
+                position: { x: exports.START_POSITIONS.nomTook.x, y: exports.START_POSITIONS.nomTook.y },
+                task: 0,
+                direction: 'south'
+            },
+            honeyBear: {
+                level: 'island',
+                position: { x: exports.START_POSITIONS.nomTook.x, y: exports.START_POSITIONS.nomTook.y },
+                task: 0,
+                direction: 'south'
+            }
+        },
+        level: 'island',
+        direction: exports.START_POSITIONS.player.direction,
+        position: {
+            x: exports.START_POSITIONS.player.x,
+            y: exports.START_POSITIONS.player.y,
+        },
+        inventory: []
+    };
+}
+exports.defaultGameData = defaultGameData;

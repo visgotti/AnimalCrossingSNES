@@ -1,8 +1,9 @@
-import {SYSTEMS} from "../../../Shared/Constants";
+import {COLLIDER_TAGS, SYSTEMS} from "../../../Shared/Constants";
 
 import {ClientSystem} from "gotti";
 import {DialogueComponent} from './Component';
 import {DialogueInterface} from "../../../Shared/types";
+import {NPC} from "../../Assemblages/NPC";
 
 type DialogueQuestionData = {
     question: string,
@@ -29,8 +30,34 @@ export class DialogueSystem extends ClientSystem {
 
     private curQuestion : DialogueQuestionData;
 
+    private talkableIcon : PIXI.Sprite;
+
+    private playerNpcDialogueCollisionPlugin : any;
+    private focusedNpc : NPC;
     constructor() {
         super(SYSTEMS.DIALOGUE);
+
+        this.playerNpcDialogueCollisionPlugin = {
+            type: 'collision',
+            name: 'dialogue',
+            tagAs: [COLLIDER_TAGS.in_front_of_client_player],
+            tagBs: [COLLIDER_TAGS.npc],
+            onCollisionStart: (colA, colB) => {
+                if(!this.focusedNpc) {
+                    this.focusedNpc = colB.gameObject.entity;
+                }
+            },
+            onCollision: (colA, colB) => {
+                if(!this.focusedNpc) {
+                    this.focusedNpc = colB.gameObject.entity;
+                }
+            },
+            onCollisionEnd: (colA, colB) => {
+                if(this.focusedNpc === colB.gameObject.entity) {
+                    this.focusedNpc = null;
+                }
+            },
+        }
     }
 
     onClear(): void {
@@ -44,6 +71,7 @@ export class DialogueSystem extends ClientSystem {
 
     onInit() {
         this.addApi(this.isInDialogue);
+        this.globals.tileWorld.use(this.playerNpcDialogueCollisionPlugin);
     }
 
     public playDialogue(dialogueData: DialogueData) {
@@ -131,5 +159,7 @@ export class DialogueSystem extends ClientSystem {
     }
 
     update(delta: any): void {
+        if(this.globals.clientPlayer && this.globals.clientPlayer.playerInput.grab && this.focusedNpc) {
+        }
     }
 }

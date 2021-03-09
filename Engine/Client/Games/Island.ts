@@ -1,9 +1,9 @@
-import {defaultGameData, GameTextures, InventoryTextures, StartGameData} from "../../Shared/types";
+import { GameTextures, InventoryTextures, StartGameData} from "../../Shared/types";
 
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 import * as World from '../lib/tileyo.js';
 import DebugColliderPlugin from '../lib/TileYoPlugins/DebugPlugin.js';
-World.use(DebugColliderPlugin);
+//World.use(DebugColliderPlugin);
 import { Gottimation } from "../lib/Gottimation/Runtime/Gottimation";
 import {GridPathFinder} from "../lib/Pathfinder";
 const resolutionSettings = {
@@ -13,7 +13,7 @@ const resolutionSettings = {
         h: 350,
     },
 }
-
+import { NPCSystem } from "../Systems/NPC/System";
 import { KeyboardInputSystem } from "../Systems/Input/System";
 import { PathfindingSystem } from "../Systems/PathFinding/System";
 import { PlayerAnimationSystem } from "../Systems/PlayerAnimation/System";
@@ -29,7 +29,7 @@ import {DialogueSystem} from "../Systems/Dialogue/System";
 import { NPCMovementSystem } from "../Systems/NPCMovement/System";
 import {GameStateSystem} from "../Systems/GameState/System";
 import { BugCatchSystem } from "../Systems/BugCatch/System";
-import { BugMovementSystem } from "../Systems/BugMovement/System";
+import { BugMovementSystem } from "../Systems/BugMovementAndAnimation/System";
 import { BugSpawnSystem } from "../Systems/BugSpawn/System";
 import { BeeKeepSystem } from "../Systems/BeeKeep/System";
 import { FlowerSystem } from "../Systems/Flower/System";
@@ -38,6 +38,7 @@ import { DigSystem } from "../Systems/Dig/System";
 import Gotti from 'gotti';
 import {getRandomNumber} from "../../Shared/Utils";
 import GottiGameInput from "../lib/GottiGameInput";
+import {defaultGameData} from "../../Shared/GameData";
 export default {
     isNetworked: false,
     type: 'island',
@@ -51,6 +52,7 @@ export default {
         PathfindingSystem,
         PlayerAnimationSystem,
         PlayerMovementSystem,
+        NPCSystem,
         TimerSystem,
         TreeSystem,
         NPCMovementSystem,
@@ -130,8 +132,13 @@ export default {
         const canvas = document.getElementById("game-canvas")
         canvas.style.opacity = `1`;
         const fadeIn = async () => {
-            canvas.style.opacity = `${Math.min(parseFloat(canvas.style.opacity) + .01, 1)}`;
-            if(parseFloat(canvas.style.opacity) < 1) {
+            const prev = parseFloat(canvas.style.opacity);
+            const next = Math.min(prev + .01, 1);
+            canvas.style.opacity = `${next}`;
+            if(next < 1) {
+                if(prev <= .5 && next >= .5) {
+                    Gotti.emit('faded-in-halfway', true)
+                }
                 return new Promise((resolve, reject) => {
                     setTimeout(() => {
                         return resolve(fadeIn());
@@ -210,6 +217,8 @@ export default {
             inventory: inventoryTextures,
             items: {
                 icons: {
+                    net: textures['net_icon.png'],
+                    shovel: textures['shovel_icon.png'],
                     hole: textures['hole_dug_up.png'],
                     tree: textures['tree.png'],
                     seeds1: textures['item0_seeds1.png'],
@@ -234,6 +243,8 @@ export default {
                     blue_bed: textures['items7_bed3.png']
                 },
                 placed: {
+                    net: textures['net_icon.png'],
+                    shovel: textures['shovel_icon.png'],
                     hole: textures['hole_dug_up.png'],
                     tree: textures['tree.png'],
                     seeds1: textures['item0_seeds1.png'],
@@ -310,7 +321,7 @@ export default {
                 cancelAnimationFrame(aniFrame);
                 let gameStateData;
                 if(payload.isNew) {
-                    gameStateData = defaultGameData(payload.data, startData.startingSpawn);
+                    gameStateData = defaultGameData(payload.data);
                 } else {
                     gameStateData = payload.data;
                 }
@@ -320,6 +331,7 @@ export default {
                     tileWorld.update(1);
                 }
                 return resolve({
+                    canvas,
                     gameInput,
                     gameTextures,
                     fadeIn,

@@ -1,12 +1,13 @@
-import {ClientSystem} from "gotti";
+import Gotti, {ClientSystem} from "gotti";
 import {MESSAGES, SYSTEMS} from "../../../Shared/Constants";
 import {Position} from "../../../Shared/Components/Position";
 
 const CAMERA_OFFSET_X = 3;
 const CAMERA_OFFSET_Y = 20;
-
+const LOG_EVERY = 1000;
 export class LevelSystem extends ClientSystem {
     private clientPositionComponent : Position;
+    private levelLink : any;
     constructor() {
         super(SYSTEMS.LEVEL);
     }

@@ -1,12 +1,16 @@
 {
     "actions": {
-        "2": "walk"
+        "2": "walk",
+        "3": "walk_net",
+        "4": "swing_net"
     },
     "id": "player",
     "name": "player",
     "boneNames": {},
     "actionIds": [
-        2
+        2,
+        3,
+        4
     ],
     "directions": [
         "west",
@@ -22,7 +26,15 @@
         "2",
         "3",
         "5",
-        "6"
+        "6",
+        "8",
+        "9",
+        "10",
+        "11",
+        "14",
+        "15",
+        "16",
+        "17"
     ],
     "setupData": {
         "frames": {

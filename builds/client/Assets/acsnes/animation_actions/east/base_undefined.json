@@ -1,0 +1,41 @@
+{
+  "id": 14,
+  "endTime": "400",
+  "frameData": [
+    {
+      "time": 0,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 25,
+          "hide": false,
+          "x": -3,
+          "y": -2,
+          "name": "base"
+        }
+      ]
+    },
+    {
+      "time": 133,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 26,
+          "name": "base"
+        }
+      ]
+    },
+    {
+      "time": 266,
+      "bones": [
+        {
+          "id": "2",
+          "slotId": 27,
+          "name": "base"
+        }
+      ]
+    }
+  ],
+  "direction": "east",
+  "actionId": 4
+}

@@ -105,7 +105,7 @@ export class PlayerAnimationSystem extends ClientSystem {
             entity['gameObject']['entity'] = entity;
             entity.emit('gameobject-ready', entity.gameObject);
         });
-        component.initSkeleton(this.globals.gottimation);
+        component.initSkeleton(this.globals.gottimation, this.globals.gameStateData.direction);
     }
 
     onEntityRemovedComponent(entity: any, component: PlayerAnimationComponent) {

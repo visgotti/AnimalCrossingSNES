@@ -35,7 +35,6 @@ export class NPCMovementSystem extends ClientSystem {
     }
 
     public onEntityAddedComponent(entity: any, component: NPCMovementComponent): void {
-        console.error('MADE ENTITY', entity)
         entity['$moveTo'] = component.moveTo.bind(component);
         this.movingNPCs.push(entity);
     }
@@ -56,18 +55,7 @@ export class NPCMovementSystem extends ClientSystem {
                 throw new Error(`Expected movement component`);
             }
             //TODO: fix mobster1 animation so we dont need to inverse it or need the additional inverse logic anywhere(also done somewhere in the npc attack system)
-            const npcAniComponent : PlayerAnimationComponent = baddy.getComponent(SYSTEMS.PLAYER_ANIMATION);
-            const updated = mc.updateMovement(delta); //: { x?: number, y?: number, movingDirectionIndex?: number, lookingDirectionIndex: number } {
-            if(npcAniComponent) {
-                if(updated.hasOwnProperty('movingDirectionIndex') && updated.movingDirectionIndex > -1) { // only has moving direction index if its updated
-                    npcAniComponent.skeleton.direction = DIRECTION_INDEX_DATA.DIRECTIONS_NAMES[updated.movingDirectionIndex]
-                    if(npcAniComponent.skeleton && npcAniComponent.skeleton.baseTrack.stopped || npcAniComponent.skeleton.baseTrack.currentAction !== 'walk') {
-                        npcAniComponent.skeleton.play('walk', null, {loop: true})
-                    }
-                } else if (npcAniComponent.skeleton && npcAniComponent.skeleton.baseTrack.currentAction !== 'idle' && npcAniComponent.skeleton.baseTrack.currentAction !== 'headchop') {
-                    npcAniComponent.skeleton.stop();
-                }
-            }
+            mc.updateMovement(delta); //: { x?: number, y?: number, movingDirectionIndex?: number, lookingDirectionIndex: number } {
         }
     }
     onServerMessage(message: Message) {

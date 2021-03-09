@@ -160,6 +160,14 @@
 	"spriteSourceSize": {"x":0,"y":1,"w":23,"h":23},
 	"sourceSize": {"w":24,"h":24}
 },
+"net_icon.png":
+{
+	"frame": {"x":225,"y":118,"w":9,"h":10},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":9,"h":10},
+	"sourceSize": {"w":9,"h":10}
+},
 "pedal1.png":
 {
 	"frame": {"x":509,"y":64,"w":16,"h":20},
@@ -232,6 +240,14 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":24},
 	"sourceSize": {"w":24,"h":24}
 },
+"shovel_icon.png":
+{
+	"frame": {"x":89,"y":113,"w":5,"h":12},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":5,"h":12},
+	"sourceSize": {"w":5,"h":12}
+},
 "tree.png":
 {
 	"frame": {"x":451,"y":1,"w":61,"h":61},
@@ -260,6 +276,6 @@
 	"format": "RGBA8888",
 	"size": {"w":544,"h":128},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:1616cd46ced11f12a107efd344e75828:37b13d9fb3dffa83c2e79f8f97a2558f:02d787503ba28f2cf2c7886a3dac8a0f$"
+	"smartupdate": "$TexturePacker:SmartUpdate:754c25815eeff31d184f2b1e111bdecb:251b8ce4be261facadf89ea490ea1b45:02d787503ba28f2cf2c7886a3dac8a0f$"
 }
 }

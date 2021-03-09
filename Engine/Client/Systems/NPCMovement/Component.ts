@@ -3,6 +3,7 @@ import { SYSTEMS } from "../../../Shared/Constants";
 import { Position } from "../../../Shared/Components/Position";
 import {NPC} from "../../Assemblages/NPC";
 import {getDistance, getMovementDataFromDeltas} from "../../../Shared/Utils";
+import {Skeleton} from "../../lib/Gottimation/Runtime/core/Skeleton";
 export class NPCMovementComponent extends Component {
     private p: Position ;
     private moveToPosition: { x: number, y: number };
@@ -13,19 +14,24 @@ export class NPCMovementComponent extends Component {
     private x_distanceToTraverse: number;
     private x_traversedSoFar: number;
     private y_distanceToTraverse: number;
+    private positionQueue : Array<{ x: number, y :number, direction?: string }> = [];
     private y_traversedSoFar: number;
     private vX: number = 0;
     private vY: number = 0;
+    private reachedSpot : boolean = false;
     private _lookingDirectionIndex: number = 0;
     private lockedInDirection: boolean = false;
     private lockedInDirectionTimeout: any;
 
+    private moveToDirection : string;
     private moveToTotalTime: number;
     private moveToTimeLeft: number;
     private entity : NPC;
-    constructor(walkSpeed) {
+    private skeleton: Skeleton;
+    constructor(walkSpeed, skeleton?: Skeleton) {
         super(SYSTEMS.NPC_MOVEMENT);
         this.walkSpeed = walkSpeed;
+        this.skeleton = skeleton;
     }
     onAdded(entity: NPC): void {
         if(!entity.hasComponent(SYSTEMS.POSITION)) {
@@ -75,7 +81,18 @@ export class NPCMovementComponent extends Component {
         }
     }
 
-    public moveTo(x, y) {
+    public moveToQueue(queue: Array<{ x: number, y: number, direction?: string }>) {
+        this.positionQueue = queue;
+        const first = this.positionQueue.shift();
+        if(first.direction && this.skeleton) {
+            this.skeleton.direction = first.direction;
+        }
+        this.moveTo(first.x, first.y, first.direction);
+    }
+
+    public moveTo(x, y, direction?: string)  {
+        this.moveToDirection = direction;
+        this.reachedSpot = false;
       //  console.error('the distance was', Math.round(getDistance({ x, y }, this.p.getPosition())));
         const position = this.p.getPosition();
         this.moveToPosition = { x: Math.round(x), y: Math.round(y) };
@@ -85,6 +102,20 @@ export class NPCMovementComponent extends Component {
         this.y_traversedSoFar = 0;
         this.vX = Math.sign(this.moveToPosition.x - position.x);
         this.vY = Math.sign(this.moveToPosition.y - position.y);
+        if(direction && this.skeleton) {
+            this.skeleton.direction = direction;
+        }
+        if(!this.vX && !this.vY) {
+            this.reachedSpot = true;
+            this.emit('reached-spot', { x, y, direction: this.moveToDirection });
+            if(this.skeleton && !this.skeleton.baseTrack.stopped) {
+                this.skeleton.stop();
+            }
+        } else {
+            if(this.skeleton && (this.skeleton.baseTrack.stopped || !this.skeleton.baseTrack.currentAction || !this.skeleton.baseTrack.currentAction.includes('walk'))) {
+                this.skeleton.play('walk', null, { loop: true });
+            }
+        }
     }
 
     public updateMovement(delta, inverseEastWest=false) : { x?: number, y?: number, movingDirectionIndex?: number, lookingDirectionIndex: number, deltaX: number, deltaY: number } {
@@ -127,6 +158,25 @@ export class NPCMovementComponent extends Component {
     //    console.error('x to traverse:', this.x_distanceToTraverse);
      //   console.error('traversed so far:', this.x_traversedSoFar);
 
+        if(nextX === this.moveToPosition.x && nextY === this.moveToPosition.y) {
+            if(!this.reachedSpot) {
+                this.reachedSpot = true;
+                this.emit('reached-spot', { ...this.moveToPosition, direction: this.moveToDirection })
+            }
+            const nextMoveTo = this.positionQueue.shift();
+            if(nextMoveTo) {
+                this.moveTo(nextMoveTo.x, nextMoveTo.y, nextMoveTo.direction);
+            } else {
+                this.skeleton?.stop();
+            }
+        }
+        this.skeleton?.update(delta*1000);
         return { x: nextX, y: nextY, movingDirectionIndex: dirIdx, lookingDirectionIndex: this._lookingDirectionIndex, deltaX: dX, deltaY: dY }
+    }
+
+    onRemoved(entity: Entity) {
+        if(this.skeleton && !this.skeleton.baseTrack.stopped) {
+            this.skeleton.stop();
+        }
     }
 }

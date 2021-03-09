@@ -6,7 +6,7 @@ import {BugMovementComponent} from "./Component";
 export class BugMovementSystem extends ClientSystem {
     private bugs : Array<{ bug: Bug, movementComponent: BugMovementComponent }> = [];
     constructor() {
-        super(SYSTEMS.BUG_MOVEMENT)
+        super(SYSTEMS.BUG_MOVEMENT_AND_ANIMATION)
     }
     onClear(): void {
     }

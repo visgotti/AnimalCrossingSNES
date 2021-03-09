@@ -21,6 +21,7 @@ export class FlowerSystem extends ClientSystem{
     private numberOfBees : number = 0;
     private numberOfTrees : number = 0;
     private numberOfFullGrownFlowers : number = 0;
+    private timeTillNextFlower : number = 0;
     private initializingGameState: boolean = false;
     private focusedFlower: Flower;
     // @ts-ignore
