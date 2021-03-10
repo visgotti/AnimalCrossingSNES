@@ -15,10 +15,11 @@ export class DigSystem extends ClientSystem {
 
     private focusedHole : any;
 
+    private playerHasShovelEquipped : boolean = false;
     private playerHoleCollisionPlugin : any;
     private playerPreventHoleCollisionPlugin : any;
     private initializingFromGameState : boolean = false;
-
+    private digCooldown : number = 0;
     private holeTexture : PIXI.Texture;
 
     constructor() {
@@ -86,9 +87,13 @@ export class DigSystem extends ClientSystem {
         this.isReady = true;
     }
 
+    private digLeftHole() : boolean {
+        return (this.globals.tileWorld.loadedMap === 'island') || !!this.possibleCollidersPreventingHole.length
+    }
+
     private canDig() {
-        return this.globals.tileWorld.loadedMap === 'island' &&
-            !this.possibleCollidersPreventingHole.length &&
+        return this.playerHasShovelEquipped &&
+            this.digCooldown === 0 &&
             this.playerAnimation.canPlayActionAnimation();
     }
 
@@ -109,7 +114,7 @@ export class DigSystem extends ClientSystem {
 
     private addNewHole(x, y, uid) {
         const to = !this.initializingFromGameState ? [SYSTEMS.GAME_STATE, SYSTEMS.FLOWER] : [SYSTEMS.FLOWER];
-       const hole = {
+       const hole = this.globals.tileWorld.addGameObject({
            texture: this.globals.gameTextures.items.placed.hole,
            position: { x, y },
            colliders: [{
@@ -119,10 +124,8 @@ export class DigSystem extends ClientSystem {
            data: {
                uid,
            }
-       }
-        this.holes.push(
-            this.globals.tileWorld.addGameObject()
-        )
+       });
+        this.holes.push(hole)
         this.dispatchLocal({
             type: MESSAGES.ADDED_HOLE,
             data: { uid, x, y, gameObject: hole },
@@ -159,6 +162,14 @@ export class DigSystem extends ClientSystem {
             case MESSAGES.CLIENT_PLAYER_ENTITY_INITIALIZED:
                 this.handleInitPlayer();
                 break;
+                switch(message.type) {
+                    case MESSAGES.EQUIP_ITEM:
+                        if (message.data === 'net') {
+                            this.playerHasShovelEquipped = true;
+                        } else {
+                            this.playerHasShovelEquipped = false;
+                        }
+                }
         }
     }
 
@@ -176,11 +187,22 @@ export class DigSystem extends ClientSystem {
 
     update(delta: any): void {
         if (!this.isReady) return;
+        if(this.digCooldown) {
+            this.digCooldown = Math.max(this.digCooldown-delta, 0);
+        }
         if(this.tryingToDig()) {
             if(this.canDig()) {
                 this.playerAnimation.skeleton.play('dig', null, { loop: false });
-                const { x, y } = this.$api.getAheadOfPlayerPosition();
-                this.addNewHole(x, y, this.$api.getUid());
+                if(this.digLeftHole()) {
+                    // todo : play succesful dig
+                    //this.$api.playSound('dig');
+                    const { x, y } = this.$api.getAheadOfPlayerPosition();
+                    this.addNewHole(x, y, this.$api.getUid());
+                } else {
+                    //this.$api.playSound('digclank');
+                    //todo : play clank dig
+                }
+                this.digCooldown = .5;
             }
         }
         this.possibleCollidersPreventingHole.length = 0;

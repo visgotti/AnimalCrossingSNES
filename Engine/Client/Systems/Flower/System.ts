@@ -89,7 +89,7 @@ export class FlowerSystem extends ClientSystem{
     }
 
     private getSeedDataForFlower(type: FlowerTypes) : SeedData {
-        const seedType = type.replace('flower', 'seed');
+        const seedType = type.replace('flower', 'seeds');
         if(!(seedType in PlatableGameData)) throw new Error(`Could not find flower: ${type} from seed: ${seedType} in the lookup`);
         return PlatableGameData[seedType]
     }
@@ -118,6 +118,16 @@ export class FlowerSystem extends ClientSystem{
             this.createFlowerEntity(f.name as FlowerTypes, f.state.plantedByPlayer, f.state.elapsedTimeAlive, f.x, f.y, f.uid);
         });
         this.initializingGameState = false;
+    }
+
+    public plantSeed(seedName: 'seeds1' | 'seeds2' | 'seeds3' | 'seeds4') : boolean {
+        const flowerName = seedName.replace('seeds', 'flower') as FlowerTypes;
+        const focusedHole = this.$api.getFocusedHole();
+        if(!focusedHole) return false;
+        const { worldX: x, worldY: y } = focusedHole;
+        this.createFlowerEntity(flowerName, true, 0, x, y, this.$api.getUid());
+        this.$api.removeHole(focusedHole);
+        this.$api.removeItem(seedName, 1)
     }
 
     onLocalMessage(message): void {
@@ -153,6 +163,10 @@ export class FlowerSystem extends ClientSystem{
         }
     }
 
+    onInit() {
+        this.addApi(this.plantSeed);
+    }
+
     private removeFlower(flower: Flower) {
         const wasFullyGrown = this.isFullyGrown(flower);
         flower.gameObject.removeFromMap();
@@ -165,8 +179,8 @@ export class FlowerSystem extends ClientSystem{
             data: { uid: flower.id, type: flower.flowerType, wasFullyGrown }
         });
 
-        const seedName = flowerType.replace('flower', 'seed');
-        const pedalName = flowerType.replace('flower', 'pedal');
+        const seedName = flowerType.replace('flower', 'seeds');
+        const pedalName = flowerType.replace('flower', 'pedals');
 
         const randomSeedSpot1 = {x: getRandomNumber(p.x-15, p.x+5), y: getRandomNumber(p.y-15, p.y+15) };
         const randomSeedSpot2 = { x: getRandomNumber(p.x-5, p.x+15), y: getRandomNumber(p.y-15, p.y+15) };

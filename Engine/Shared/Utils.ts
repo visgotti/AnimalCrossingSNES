@@ -363,15 +363,16 @@ export function rectContainsPoint(rect, point){
 }
 
 export function getVerticesFromRect(rect) : Array<{x: number, y: number }> {
+    rect = normalizeRectData(rect);
     let vertices = [];
     vertices.push({ x: rect.x, y: rect.y }); // top left;
-    vertices.push({ x: rect.x + rect.width, y: rect.y }); // top right;
-    vertices.push({ x: rect.x + rect.width, y: rect.y + rect.height }); // bottom right
-    vertices.push({ x: rect.x, y: rect.y + rect.height }); // bottom left
+    vertices.push({ x: rect.x + rect.w, y: rect.y }); // top right;
+    vertices.push({ x: rect.x + rect.w, y: rect.y + rect.h }); // bottom right
+    vertices.push({ x: rect.x, y: rect.y + rect.h }); // bottom left
     return vertices;
 }
 
-function getSegmentsFromRect(rect) {
+export function getSegmentsFromRect(rect) {
     const verticies = getVerticesFromRect(rect);
     return [
         [{ x: verticies[0].x, y: verticies[0].y}, { x: verticies[1].x, y: verticies[1].y}], // top left to top right
@@ -380,7 +381,118 @@ function getSegmentsFromRect(rect) {
         [{ x: verticies[0].x, y: verticies[0].y}, { x: verticies[3].x, y: verticies[3].y}] // top left to bottom left
     ]
 }
+export type LineCircleResponse = { endpoint?: boolean, collide: boolean, angle: number, hitPoint?: { x: number, y: number } };
 
+export function resolveLineCircleCollisionPosition(collisionData: LineCircleResponse, circle: { x: number, y: number, diameter: number, radius: number }) : { x: number, y: number } {
+    if (collisionData.endpoint) {
+        //Collision handling for Edge Cases
+        var dist = Math.sqrt((circle.x - collisionData.hitPoint.x) ** 2 + (circle.y - collisionData.hitPoint.y) ** 2);
+        var angle = Math.atan2((-circle.y + collisionData.hitPoint.y), (-circle.x + collisionData.hitPoint.x));
+        var posx = (circle.x - circle.radius) - (circle.radius - dist) * Math.cos(angle);
+        var posy = (circle.y - circle.radius) - (circle.radius - dist) * Math.sin(angle);
+        return {x: posx, y: posy};
+    } else {
+        //Collision handling for Cases other than Edge Cases
+        //Collsion handling for line having 90deg or -90deg of angle (90deg being vertical line)
+        if (collisionData.angle == Math.PI / 2 || collisionData.angle == -Math.PI / 2) {
+            if (collisionData.hitPoint.x - (circle.x - circle.radius) <= circle.diameter / 2) {
+                return {x: collisionData.hitPoint.x, y: (circle.y - circle.radius)};
+            } else if (collisionData.hitPoint.x - (circle.x - circle.radius) > circle.radius) {
+                return {x: collisionData.hitPoint.x - circle.diameter, y: circle.y - circle.radius}
+            }
+        } else if (collisionData.hitPoint.y - (circle.y - circle.radius) > circle.diameter / 2) {
+            return {
+                x: collisionData.hitPoint.x - circle.diameter * (1 - Math.sin(collisionData.angle)) / 2,
+                y: collisionData.hitPoint.y - circle.diameter * (1 + Math.cos(collisionData.angle)) / 2
+            }
+        } else if (collisionData.hitPoint.y - (circle.y - circle.radius) < circle.diameter / 2) {
+            return {
+                x: -circle.diameter * (1 + Math.sin(collisionData.angle)) / 2 + collisionData.hitPoint.x,
+                y: -circle.diameter * (1 - Math.cos(collisionData.angle)) / 2 + collisionData.hitPoint.y,
+            }
+        }
+    }
+}
+export function lineCircleData(x1, y1, x2, y2, cx, cy, r) : LineCircleResponse | boolean {
+    // is either end INSIDE the circle?
+    // if so, return true immediately
+    if(x2 > x1) {
+        const oldX2 = x2;
+        const oldY2 = y2;
+        x2 = x1;
+        y2 = y1;
+        x1 = oldX2;
+        y1 = oldY2;
+    }
+
+    console.log({ x1, y1, x2, y2, cx, cy, r });
+
+    var inside1 = pointCircle(x1,y1, cx,cy,r);
+    var inside2 = pointCircle(x2,y2, cx,cy,r);
+    // get length of the line
+    var distX = x1 - x2;
+    var distY = y1 - y2;
+    var len = Math.sqrt( (distX*distX) + (distY*distY) );
+
+    // get dot product of the line and circle
+    var dot = ( ((cx-x1)*(x2-x1)) + ((cy-y1)*(y2-y1)) ) / Math.pow(len,2);
+
+    // find the closest point on the line
+    var closestX = x1 + (dot * (x2-x1));
+    var closestY = y1 + (dot * (y2-y1));
+    var endpoint = false;
+    if (inside1 || inside2) {
+        const angle = Math.atan2((y1 - y2), (x1 - x2))
+        const lineLen = Math.sqrt( ((x1-x2)*(x1-x2)) + ((y1-y2)*(y1-y2)) );
+        const circleEndpoint1 = Math.sqrt( ((x1-closestX)*(x1-closestX)) + ((y1-closestY)*(y1-closestY)) );
+        const circleEndpoint2 = Math.sqrt( ((x2-closestX)*(x2-closestX)) + ((y2-closestY)*(y2-closestY)) );
+        if(lineLen <= circleEndpoint1){
+            closestX = x2;
+            closestY = y2;
+            endpoint = true; //Endpoint shows if the collided point is a edge point or not
+        }
+        if(lineLen <= circleEndpoint2){
+            closestX = x1;
+            closestY = y1;
+            endpoint = true; //Endpoint shows if the collided point is a edge point or not
+        }
+
+        return {
+            collide: true,
+            angle: angle,
+            hitPoint: { x: closestX, y: closestY },
+            endpoint : endpoint, //Endpoint shows if the collided point is a edge point or not
+        }
+    }
+
+
+    // is this point actually on the line segment?
+    // if so keep going, but if not, return false
+    var onSegment = linePoint(x1,y1,x2,y2, closestX,closestY);
+    //
+    if (!onSegment) return false;
+
+    // get distance to closest point
+    // console.log('cx : ' + cx + ' cy : ' + cy)
+    // console.log('closestX : ' + closestX + ' closestY : ' + closestY)
+    distX = closestX - cx;
+    distY = closestY - cy;
+    var distance = Math.sqrt( (distX*distX) + (distY*distY) );
+    distance = Math.round(distance*10000)/10000; //Rounding distance upto 4 decimal places
+    //console.log('distance : ' + distance)
+    if (distance <= r) {
+        var angle = Math.atan2((y1 - y2), (x1 - x2));
+        //console.log(angle*180/Math.PI);
+        //console.log('closestX : ' + closestX + ' closestY : ' + closestY)
+        return {
+            collide: true,
+            angle,
+            hitPoint: { x: closestX, y: closestY },
+            endpoint : false, //Endpoint shows if the collided point is a edge point or not
+        }
+    }
+    return false;
+}
 export function getRectRectSegmentCollisions(rect1, rect2) {
     const radius = rect1.width / 2;
     const circle = {

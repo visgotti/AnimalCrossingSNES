@@ -48,7 +48,7 @@ export class PlayerAnimationComponent extends Component {
 
     public canPlayActionAnimation() : boolean {
         if (!this.skeleton) return false;
-        return this.skeleton.baseTrack.currentAction.includes('walk') || this.skeleton.baseTrack.currentAction.includes('idle');
+        return this.skeleton.baseTrack.stopped || !this.skeleton.baseTrack.currentAction || (this.skeleton.baseTrack.currentAction.includes('walk') || this.skeleton.baseTrack.currentAction.includes('idle'));
     }
 
     public updateAnimation(delta: number, actionComponent?: PlayerActionComponent) {

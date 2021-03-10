@@ -32,6 +32,8 @@ export class DialogueSystem extends ClientSystem {
 
     private talkableIcon : PIXI.Sprite;
 
+    private grabCooldown : number;
+
     private playerNpcDialogueCollisionPlugin : any;
     private focusedNpc : NPC;
     constructor() {
@@ -154,12 +156,44 @@ export class DialogueSystem extends ClientSystem {
     public isInDialogue() : boolean {
         return !!this.container.visible
     }
+    get isInResponse() : boolean {
+        return !!this.responseContainer.visible
+    }
+
+    get grabIsCoolingDown() : boolean {
+        return this.grabCooldown !== 0;
+    }
 
     onServerMessage(message): any {
     }
+    private choseSelectedResponse() {
+        //todo: figure out how to continue with the dialogue after chosing
+        const response = this.curResponseOptions[this.currentSelectedResponseOptionIndex];
+        this.clearResponse();
+    }
+    private doNextDialogue() {
+    }
+    public startDialogue(data: DialogueData) {
+
+    }
 
     update(delta: any): void {
-        if(this.globals.clientPlayer && this.globals.clientPlayer.playerInput.grab && this.focusedNpc) {
+        if(this.grabCooldown > 0) {
+            this.grabCooldown-=delta;
+        }
+        if(this.globals.clientPlayer && this.globals.clientPlayer.playerInput.grab) {
+            if(this.grabIsCoolingDown) return;
+            if(this.isInDialogue()) {
+                if(this.isInResponse) {
+                    this.choseSelectedResponse();
+                    this.grabCooldown = .5;
+                } else {
+                    this.doNextDialogue();
+                    this.grabCooldown = .5;
+                }
+            } else if (this.focusedNpc) {
+                this.startDialogue(this.focusedNpc.getNextDialogue());
+            }
         }
     }
 }

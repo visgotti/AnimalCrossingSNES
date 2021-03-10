@@ -21,6 +21,7 @@ export enum SYSTEMS {
     BEE_KEEP,
     DIG,
     NPC,
+    HOUSE,
 }
 export type SeedData = {
     flower: string,
@@ -29,6 +30,8 @@ export type SeedData = {
     spawnRate: number
 }
 export enum MESSAGES {
+    PLACE_FURNITURE,
+    REMOVE_FURNITURE,
     ADDED_INVENTORY_ITEM,
     REMOVED_INVENTORY_ITEM,
     FINISHED_TUTORIAL,

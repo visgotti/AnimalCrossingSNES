@@ -17,7 +17,7 @@ import {GlobalGameData, ItemTypeInventoryActionLookup} from "../../../Shared/Gam
 class InventorySlot extends PIXI.Container {
     public bg : PIXI.Sprite = new PIXI.Sprite(PIXI.Texture.EMPTY);
     public itemSprite : PIXI.Sprite = new PIXI.Sprite(PIXI.Texture.EMPTY);
-    public quantityText : PIXI.extras.BitmapText = new PIXI.extras.BitmapText('', { font: 'stroke-small'});
+    public quantityText : PIXI.extras.BitmapText = new PIXI.extras.BitmapText('', { font: 'smallgold'});
     public itemName : string = null;
     private _quantity : number = 0;
     constructor() {
@@ -69,7 +69,7 @@ class ContextMenuOption extends PIXI.Container {
         this.addChild(this.bg);
         this.bg.y -= 3;
         this.bg.x -= 2;
-        this.bitmapText = new PIXI.extras.BitmapText(option, { font: 'stroke-small'});
+        this.bitmapText = new PIXI.extras.BitmapText(option, { font: 'smallgold'});
         this.addChild(this.bitmapText)
     }
 }
@@ -432,10 +432,8 @@ export class InventorySystem extends ClientSystem {
                             data: this.currentSelectedItemData.inventoryData.name
                         })
                     } else if (o === 'plant') {
-                        if(!(this.$api.getFocusedHole())) {
+                        if(!(this.$api.plantSeed())) {
                             console.error('no hole.')
-                        } else {
-                            console.error('DO PLANT')
                         }
                     } else if (o === 'drop') {
                         if(!(this.$api.dropItemFromPlayer(this.currentSelectedItemData.inventoryData.name))) {

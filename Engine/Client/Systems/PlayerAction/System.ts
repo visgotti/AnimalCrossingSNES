@@ -6,6 +6,7 @@ type ValidTools = 'net' | 'shovel' | 'axe'
 
 export class PlayerActionSystem extends ClientSystem {
     private clientPlayerComponent : PlayerActionComponent;
+    private grabCooldown : number = 0;
     constructor() {
         super(SYSTEMS.PLAYER_ACTION);
     }
@@ -34,7 +35,10 @@ export class PlayerActionSystem extends ClientSystem {
     }
 
     update(delta: any): void {
-        if(this.globals.clientPlayer) {
+        if(this.globals.clientPlayer && this.clientPlayerComponent.actionAttachment && this.globals.clientPlayer.playerInput.grab && !this.$api.isInDialogue() && !this.$api.isInventoryOpen() && !this.grabCooldown) {
+        }
+        if(this.grabCooldown  > .5) {
+            this.grabCooldown -= delta;
         }
     }
 

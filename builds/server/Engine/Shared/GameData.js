@@ -25,36 +25,30 @@ exports.ItemTypeInventoryActionLookup = {
     [types_1.ItemTypes.TREE]: [],
 };
 exports.PlatableGameData = {
-    'seed1': {
+    'seeds1': {
         flower: 'flower1',
         timeToGrow: 100,
         beeFactor: 1,
         spawnRate: 10000,
     },
-    'seed2': {
+    'seeds2': {
         flower: 'flower2',
         timeToGrow: 150,
         beeFactor: 1.5,
         spawnRate: 15000,
     },
-    'seed3': {
+    'seeds3': {
         flower: 'flower3',
         timeToGrow: 500,
         beeFactor: 5,
         spawnRate: 25000,
     },
-    'seed4': {
+    'seeds4': {
         flower: 'flower4',
         timeToGrow: 1000,
         beeFactor: 10,
         spawnRate: 50000,
     },
-    'seed5': {
-        flower: 'flower4',
-        timeToGrow: 1500,
-        beeFactor: 15,
-        spawnRate: 55000,
-    }
 };
 exports.START_POSITIONS = {
     nomTook: { x: 1030, y: 550, direction: 'south' },

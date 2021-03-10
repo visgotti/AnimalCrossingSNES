@@ -3,7 +3,7 @@ import { GameTextures, InventoryTextures, StartGameData} from "../../Shared/type
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 import * as World from '../lib/tileyo.js';
 import DebugColliderPlugin from '../lib/TileYoPlugins/DebugPlugin.js';
-//World.use(DebugColliderPlugin);
+World.use(DebugColliderPlugin);
 import { Gottimation } from "../lib/Gottimation/Runtime/Gottimation";
 import {GridPathFinder} from "../lib/Pathfinder";
 const resolutionSettings = {
@@ -225,18 +225,17 @@ export default {
                     seeds2: textures['item0_seeds2.png'],
                     seeds3: textures['item0_seeds3.png'],
                     seeds4: textures['item0_seeds4.png'],
-                    seeds5: textures['item0_seeds5.png'],
-                    pedals1: textures['pedal1.png'],
-                    pedals2: textures['pedal2.png'],
-                    pedals3: textures['pedal3.png'],
-                    pedals4: textures['pedal4.png'],
-                    pedals5: textures['pedal5.png'],
-                    flower1: textures['pedal1.png'],
-                    flower2: textures['pedal2.png'],
-                    flower3: textures['pedal3.png'],
-                    flower4: textures['pedal3.png'],
-                    flower5: textures['pedal5.png'],
+                    pedals1: textures['flower_pedals1.png'],
+                    pedals2: textures['flower_pedals2.png'],
+                    pedals3: textures['flower_pedals3.png'],
+                    pedals4: textures['flower_pedals4.png'],
+                    flower1: textures['flower1.png'],
+                    flower2: textures['flower2.png'],
+                    flower3: textures['flower3.png'],
+                    flower4: textures['flower4.png'],
                     beehive: textures['beehive.png'],
+                    sapling: textures['sapling.png'],
+                    planted: textures['just_planted_seeds.png'],
                     bee: textures['bee.png'],
                     red_bed: textures['items5_bed1.png'],
                     green_bed: textures['items6_bed2.png'],
@@ -251,17 +250,16 @@ export default {
                     seeds2: textures['item0_seeds2.png'],
                     seeds3: textures['item0_seeds3.png'],
                     seeds4: textures['item0_seeds4.png'],
-                    seeds5: textures['item0_seeds5.png'],
-                    pedals1: textures['pedal1.png'],
-                    pedals2: textures['pedal1.png'],
-                    pedals3: textures['pedal1.png'],
-                    pedals4: textures['pedal1.png'],
-                    pedals5: textures['pedal1.png'],
-                    flower1: textures['pedal1.png'],
-                    flower2: textures['pedal2.png'],
-                    flower3: textures['pedal3.png'],
-                    flower4: textures['pedal3.png'],
-                    flower5: textures['pedal5.png'],
+                    sapling: textures['sapling.png'],
+                    planted: textures['just_planted_seeds.png'],
+                    pedals1: textures['flower_pedals1.png'],
+                    pedals2: textures['flower_pedals2.png'],
+                    pedals3: textures['flower_pedals3.png'],
+                    pedals4: textures['flower_pedals4.png'],
+                    flower1: textures['flower1.png'],
+                    flower2: textures['flower2.png'],
+                    flower3: textures['flower3.png'],
+                    flower4: textures['flower4.png'],
                     beehive: textures['beehive.png'],
                     bee: textures['bee.png'],
                     red_bed: textures['placeable_bed1.png'],
@@ -354,6 +352,8 @@ const loadSpritesAndData = async () => {
     const loader = PIXI.loader;
     loader.reset();
     [
+        { name: 'smallgold',url: 'Assets/fonts/smallgold.fnt'},
+        { name: 'gold', url: 'Assets/fonts/gold.fnt'},
         { name: 'ns-small', url: 'Assets/fonts/ns-small.fnt'},
         { name: 'stroke-small', url: 'Assets/fonts/stroke-small.fnt'},
     ].forEach(asset => {
